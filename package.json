@@ -1,0 +1,27 @@
+{
+	"name": "akivadb",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "jest",
+		"watch": "jest --watchAll"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/bolorundurovj/akivaDB.git"
+	},
+	"keywords": [],
+	"author": "Bolorunduro Valiant-Joshua",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/bolorundurovj/akivaDB/issues"
+	},
+	"homepage": "https://github.com/bolorundurovj/akivaDB",
+	"devDependencies": {
+		"jest": "27.4.5"
+	},
+	"dependencies": {
+		"lql-parser": "^1.0.0"
+	}
+}
