@@ -1,0 +1,14 @@
+using test
+create collection users name email
+create collection test3 ["firstName", "lastName", "login", "password"]
+create index email on users email
+insert users test test@gmail.com
+select * from users
+select name from users
+select name email from users
+select ["name" "email"] from users
+select * from users where email = email
+select * from users where email like nul
+update users set name = geeee where email = null
+delete from users where name = x
+bulk insert users [{name: "one", email: "one"}]

@@ -4,6 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
+		"repl": "node index.js repl",
 		"test": "jest",
 		"watch": "jest --watchAll",
 		"lint": "standard --fix"
@@ -24,6 +25,7 @@
 		"standard": "^16.0.4"
 	},
 	"dependencies": {
-		"lql-parser": "^1.0.0"
+		"akivaparser": "^1.0.0",
+		"repl": "^0.1.3"
 	}
 }
