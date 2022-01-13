@@ -41,7 +41,6 @@ const createInsertDocuments = (keys, documents) => {
   console.log(keys);
 
   documents.forEach((document) => {
-    console.log(document);
     const insertObj = {};
 
     for (let i = 0; i < keys.length; i++) {
@@ -56,7 +55,6 @@ const createInsertDocuments = (keys, documents) => {
       }
 
       insertObj[key] = document[i] || document[key];
-      console.log(insertObj);
     }
 
     insertDocuments.push(insertObj);

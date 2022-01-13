@@ -2,10 +2,11 @@ using test
 
 create collection lecturers firstName lastName email staffId password
 create collection students ["firstName", "lastName", "email", "matricNo", "password", "cgpa"]
-create index email on users email
 
 insert lecturers Adebambo Kayode adebamboko@futa.edu.ng fs1022 password
 bulk insert students [{firstName: "Vincent", lastName: "Enyata", email: "vincent221@gmail.com", matricNo: "DDD/11/0000", "password", 4.99}, {firstName: "Ahmad", lastName: "Mustafa", email: "amustafa@yahoo.com", matricNo: "WWW/11/0000", "password", 4.20}]
+
+create index email on users email
 
 select * from lecturers
 select firstName from lecturers
