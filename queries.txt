@@ -1,20 +1,19 @@
 using test
 
-create collection users name email
-create collection test3 ["firstName", "lastName", "login", "password"]
+create collection lecturers firstName lastName email staffId password
+create collection students ["firstName", "lastName", "email", "matricNo", "password", "cgpa"]
 create index email on users email
 
-insert users test test@gmail.com
+insert lecturers Adebambo Kayode adebamboko@futa.edu.ng fs1022 password
+bulk insert students [{firstName: "Vincent", lastName: "Enyata", email: "vincent221@gmail.com", matricNo: "DDD/11/0000", "password", 4.99}, {firstName: "Ahmad", lastName: "Mustafa", email: "amustafa@yahoo.com", matricNo: "WWW/11/0000", "password", 4.20}]
 
-select * from users
-select name from users
-select name email from users
-select ["name" "email"] from users
-select * from users where email = email
-select * from users where email like nul
+select * from lecturers
+select firstName from lecturers
+select firstName staffId from lecturers
+select ["firstName" "matricNo" "cgpa"] from students
+select * from students where email = vincent221@gmail.com
+select * from students where email like vincent221
 
-update users set name = geeee where email = null
+update lecturers set password = secret where staffId = fs1022
 
-delete from users where name = x
-
-bulk insert users [{name: "one", email: "one"}]
+delete from students where matricNo = DDD/11/0000
