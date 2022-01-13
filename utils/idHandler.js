@@ -1,5 +1,10 @@
 let _generatedUIDs = {};
 
+/**
+ * Generate UID
+ * @author Bolorunduro Valiant-Joshua
+ * @returns {string} UUID
+ */
 const generateUID = () => {
   let firstPart = (Math.random() * 46656) | 0;
   let secondPart = (Math.random() * 46656) | 0;
@@ -7,6 +12,12 @@ const generateUID = () => {
   secondPart = ("000" + secondPart.toString(36)).slice(-3);
   return firstPart + secondPart;
 };
+
+/**
+ * Generates UID and checks if Identifier id duplicated
+ * @author Bolorunduro Valiant-Joshua
+ * @returns {string} UUID
+ */
 const generateUIDWithCollisionChecking = () => {
   while (true) {
     const uid = (
