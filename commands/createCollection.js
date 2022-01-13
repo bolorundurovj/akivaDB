@@ -3,74 +3,76 @@ const {
   setDatabase,
   saveDatabase,
   saveCollection,
-  setCollection
-} = require('../database')
+  setCollection,
+} = require("../database");
 
-const executeCreateCollection = function (params) {
-  const { columns, collection } = params
+const executeCreateCollection = (params) => {
+  const { columns, collection } = params;
 
   try {
-    createCollection(columns, collection)
+    createCollection(columns, collection);
 
-    return `Collection ${collection} created`
+    return `Collection ${collection} created`;
   } catch (error) {
-    return error
+    return error;
   }
-}
+};
 
-const createCollection = function (columns, collection) {
-  const database = getDatabase()
+const createCollection = (columns, collection) => {
+  const database = getDatabase();
 
-  if (collection === 'name') {
-    throw new Error("ERROR: you can't create a collection with name 'name', its a reserved word.")
+  if (collection === "name") {
+    throw new Error(
+      "ERROR: you can't create a collection with name 'name', its a reserved word."
+    );
   }
 
-  const columnsArray = createColumnsArray(columns)
+  const columnsArray = createColumnsArray(columns);
 
-  saveCollectionToDisk(collection)
+  saveCollectionToDisk(collection);
 
-  saveDatabaseToDisk(database, collection, columnsArray)
-}
+  saveDatabaseToDisk(database, collection, columnsArray);
+};
 
-const saveDatabaseToDisk = function (database, collection, columns) {
+const saveDatabaseToDisk = (database, collection, columns) => {
   database.collections = [
     ...database.collections,
     {
       name: collection,
       keys: columns,
-      indexes: []
-    }
-  ]
+      indexes: [],
+    },
+  ];
 
-  setDatabase(database)
-  saveDatabase(database)
-}
+  setDatabase(database);
+  saveDatabase(database);
+};
 
-const saveCollectionToDisk = function (collection) {
-  setCollection(collection, [])
-  saveCollection(collection, [])
-}
+const saveCollectionToDisk = (collection) => {
+  setCollection(collection, []);
+  saveCollection(collection, []);
+};
 
-const createColumnsArray = function (columns) {
+const createColumnsArray = (columns) => {
   if (Array.isArray(columns[0])) {
-    columns = columns[0]
+    columns = columns[0];
   }
 
   columns.map((key) => {
-    if (typeof key === 'string') {
+    if (typeof key === "string") {
       return {
         name: key,
-        nullable: false
-      }
+        nullable: false,
+      };
     }
 
-    return key
-  })
+    return key;
+  });
 
-  return columns
-}
+  return columns;
+};
 
 module.exports = {
-  name: 'CREATE COLLECTION',
-  execute: executeCreateCollection
-}
+  name: "CREATE COLLECTION",
+  execute: executeCreateCollection,
+};

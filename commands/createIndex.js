@@ -1,16 +1,16 @@
-const { createIndex } = require('../indexing')
+const { createIndex } = require("../indexing");
 
-const executeCreateIndex = function (params) {
+const executeCreateIndex = (params) => {
   try {
-    createIndex(params)
+    createIndex(params);
 
-    return `Index ${params.name} created sucessfully`
+    return `Index ${params.name} created sucessfully`;
   } catch (error) {
-    return error
+    return error;
   }
-}
+};
 
 module.exports = {
-  name: 'CREATE INDEX',
-  execute: executeCreateIndex
-}
+  name: "CREATE INDEX",
+  execute: executeCreateIndex,
+};
