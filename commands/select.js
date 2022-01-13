@@ -1,140 +1,143 @@
-const { getCollection, getCollectionMetadata } = require('../database')
-const { getIndex } = require('../indexing')
-const { buildWhere } = require('../utils/whereBuilder')
+const { getCollection, getCollectionMetadata } = require("../database");
+const { getIndex } = require("../indexing");
+const { buildWhere } = require("../utils/whereBuilder");
 const {
   buildIndexComparingFunction,
-  buildIndexBlockingFunction
-} = require('../utils/indexingFunctionsBuilder')
+  buildIndexBlockingFunction,
+} = require("../utils/indexingFunctionsBuilder");
 
-const executeSelect = function (params) {
-  const { columns, collection, where } = params
+const executeSelect = (params) => {
+  const { columns, collection, where } = params;
 
   try {
-    return select(columns, collection, where || [])
+    return select(columns, collection, where || []);
   } catch (error) {
-    return error
+    return error;
   }
-}
+};
 
-const select = function (columns, collection, where) {
-  const keys = buildKeysArray(columns)
+const select = (columns, collection, where) => {
+  const keys = buildKeysArray(columns);
 
   if (keys.length === 0 || where.length > 1) {
-    return fullCollectionSearch(collection, keys, where)
+    return fullCollectionSearch(collection, keys, where);
   }
 
-  const index = getAppropriateIndex(collection, keys, where)
+  const index = getAppropriateIndex(collection, keys, where);
 
   if (index !== undefined && where.length === 1) {
-    return indexSearch(collection, where, index)
+    return indexSearch(collection, where, index);
   }
 
-  return fullCollectionSearch(collection, keys, where)
-}
+  return fullCollectionSearch(collection, keys, where);
+};
 
-const fullCollectionSearch = function (collection, keys, where) {
-  const collectionRows = getCollection(collection)
+const fullCollectionSearch = (collection, keys, where) => {
+  const collectionRows = getCollection(collection);
 
   if (keys.length === 0 && where.length === 0) {
-    return collectionRows
+    return collectionRows;
   }
 
-  let whereFiltered = [...collectionRows]
+  let whereFiltered = [...collectionRows];
 
   if (where !== undefined && Array.isArray(where)) {
     where.forEach((whereObj) => {
-      const whereFunction = buildWhere(whereObj)
+      const whereFunction = buildWhere(whereObj);
 
-      whereFiltered = whereFiltered.filter(whereFunction)
-    })
+      whereFiltered = whereFiltered.filter(whereFunction);
+    });
   }
 
   if (keys.length === 0) {
-    return whereFiltered
+    return whereFiltered;
   }
 
   const result = whereFiltered.map((data) => {
-    const row = {}
+    const row = {};
 
     for (let i = 0; i < keys.length; i++) {
-      const key = keys[i]
-      row[key] = data[key]
+      const key = keys[i];
+      row[key] = data[key];
     }
 
-    return row
-  })
+    return row;
+  });
 
-  return result
-}
+  return result;
+};
 
-const buildKeysArray = function (columns) {
-  if (columns === 'star') {
-    return []
+const buildKeysArray = (columns) => {
+  if (columns === "star") {
+    return [];
   }
 
   if (Array.isArray(columns)) {
-    return columns
+    return columns;
   } else {
-    return [columns]
+    return [columns];
   }
-}
+};
 
-const getAppropriateIndex = function (collection, keys, where) {
-  const metadata = getCollectionMetadata(collection)
+const getAppropriateIndex = (collection, keys, where) => {
+  const metadata = getCollectionMetadata(collection);
 
   for (let j = 0; j < metadata.indexes.length; j++) {
-    const index = metadata.indexes[j]
+    const index = metadata.indexes[j];
 
     if (index.columns.length < keys.length) {
-      continue
+      continue;
     }
 
-    let useIndex = true
+    let useIndex = true;
 
     for (let i = 0; i < keys.length; i++) {
-      const key = keys[i]
-
-      if (index.columns.find((column) => column.toLowerCase() === key) === undefined) {
-        useIndex = false
-
-        continue
-      }
-    }
-
-    for (let i = 0; i < where.length; i++) {
-      const whereObj = where[i]
-
-      const key = whereObj.key
+      const key = keys[i];
 
       if (
         index.columns.find((column) => column.toLowerCase() === key) ===
         undefined
       ) {
-        useIndex = false
-        continue
+        useIndex = false;
+
+        continue;
+      }
+    }
+
+    for (let i = 0; i < where.length; i++) {
+      const whereObj = where[i];
+
+      const key = whereObj.key;
+
+      if (
+        index.columns.find((column) => column.toLowerCase() === key) ===
+        undefined
+      ) {
+        useIndex = false;
+        continue;
       }
     }
 
     if (useIndex) {
-      return index
+      return index;
     }
   }
 
-  return undefined
-}
+  return undefined;
+};
 
-const indexSearch = function (collection, where, index) {
-  const indexBtree = getIndex(collection, index.name)
+const indexSearch = (collection, where, index) => {
+  const indexBtree = getIndex(collection, index.name);
 
-  const comparingFunction = buildIndexComparingFunction(where[0])
-  const blockingFunction = buildIndexBlockingFunction(where[0])
+  const comparingFunction = buildIndexComparingFunction(where[0]);
+  const blockingFunction = buildIndexBlockingFunction(where[0]);
 
-  const values = indexBtree.search(comparingFunction, blockingFunction)
+  const values = indexBtree.search(comparingFunction, blockingFunction);
 
-  return values
-}
+  return values;
+};
 
 module.exports = {
-  name: 'SELECT',
-  execute: executeSelect
-}
+  name: "SELECT",
+  execute: executeSelect,
+};

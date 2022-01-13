@@ -1,45 +1,44 @@
-const { setDatabase, saveDatabase } = require('../database')
+const { setDatabase, saveDatabase } = require("../database");
 
-const fs = require('fs')
+const fs = require("fs");
 
-const executeUsing = function (params) {
-  const databaseName = params
+const executeUsing = (params) => {
+  const databaseName = params;
   try {
-    return using(databaseName)
+    return using(databaseName);
   } catch (error) {
-    return error
+    return error;
   }
-}
+};
 
-const using = function (databaseName) {
-  const databasePath = `./${databaseName}.akvdb`
+const using = (databaseName) => {
+  const databasePath = `./akivadb/${databaseName}.akvdb`;
 
   if (fs.existsSync(databasePath)) {
-    loadDatabaseFromDisk(databasePath)
+    loadDatabaseFromDisk(databasePath);
 
-    return `Database ${databaseName} loaded.`
+    return `Database ${databaseName} loaded.`;
   } else {
-    createNewDatabase(databaseName)
-
-    return `new database, with name ${databaseName}, created.`
+    createNewDatabase(databaseName);
+    return `new database, with name ${databaseName}, created.`;
   }
-}
+};
 
-const loadDatabaseFromDisk = function (databasePath) {
-  const rawDatabase = fs.readFileSync(databasePath)
+const loadDatabaseFromDisk = (databasePath) => {
+  const rawDatabase = fs.readFileSync(databasePath);
 
-  const databaseJSON = JSON.parse(rawDatabase)
+  const databaseJSON = JSON.parse(rawDatabase);
 
-  setDatabase(databaseJSON)
-}
+  setDatabase(databaseJSON);
+};
 
-const createNewDatabase = function (databaseName) {
-  const newDatabase = { name: databaseName, collections: [] }
-  setDatabase(newDatabase)
-  saveDatabase(newDatabase)
-}
+const createNewDatabase = (databaseName) => {
+  const newDatabase = { name: databaseName, collections: [] };
+  setDatabase(newDatabase);
+  saveDatabase(newDatabase);
+};
 
 module.exports = {
-  name: 'USING',
-  execute: executeUsing
-}
+  name: "USING",
+  execute: executeUsing,
+};
