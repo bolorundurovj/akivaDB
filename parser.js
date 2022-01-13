@@ -1,15 +1,15 @@
-const { commands } = require('./commandExecutor')
-const parser = require('akivaparser')
+const { commands } = require("./commandExecutor");
+const parser = require("akivaparser");
 
-function parseStatements (str) {
-  const statements = parser.parseInput(str)
+const parseStatements = (str) => {
+  const statements = parser.parseInput(str);
 
-  return objStatementToCommand(statements)
-}
+  return objStatementToCommand(statements);
+};
 
-function objStatementToCommand (statements) {
+const objStatementToCommand = (statements) => {
   if (!Array.isArray(statements)) {
-    statements = [statements]
+    statements = [statements];
   }
 
   statements = statements.map((st) => {
@@ -17,14 +17,14 @@ function objStatementToCommand (statements) {
       command: commands.find(
         (cm) => cm.name.toLowerCase() === st.type.toLowerCase()
       ),
-      params: st.params
-    }
-  })
+      params: st.params,
+    };
+  });
 
-  return statements
-}
+  return statements;
+};
 
 module.exports = {
   parseStatements,
-  objStatementToCommand
-}
+  objStatementToCommand,
+};
