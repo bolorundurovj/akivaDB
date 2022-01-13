@@ -1,68 +1,68 @@
-const { getCollection, setCollection, saveCollection } = require('../database')
-const { buildWhere } = require('../utils/whereBuilder')
+const { getCollection, setCollection, saveCollection } = require("../database");
+const { buildWhere } = require("../utils/whereBuilder");
 
-let updatedValues = 0
+let updatedValues = 0;
 
-const executeUpdate = function (params) {
-  const { collection, where, set } = params
+const executeUpdate = (params) => {
+  const { collection, where, set } = params;
 
   try {
-    updatedValues = 0
-
-    update(collection, where, set)
-
-    return `Successfully updated ${updatedValues} elements`
+    updatedValues = 0;
+    update(collection, where, set);
+    return `Successfully updated ${updatedValues} elements`;
   } catch (error) {
-    return error
+    return error;
   }
-}
+};
 
-const update = function (collection, where, set) {
-  const collectionRows = getCollection(collection)
+const update = (collection, where, set) => {
+  const collectionRows = getCollection(collection);
+  const whereFunctions = createWhereFunctions(where);
+  const updatedCollectionRows = getUpdatedRows(
+    collectionRows,
+    whereFunctions,
+    set
+  );
 
-  const whereFunctions = createWhereFunctions(where)
+  updateDatabase(collection, updatedCollectionRows);
+};
 
-  const updatedCollectionRows = getUpdatedRows(collectionRows, whereFunctions, set)
+const updateDatabase = (collection, updatedCollectionRows) => {
+  setCollection(collection, updatedCollectionRows);
+  saveCollection(collection, updatedCollectionRows);
+};
 
-  updateDatabase(collection, updatedCollectionRows)
-}
-
-const updateDatabase = function (collection, updatedCollectionRows) {
-  setCollection(collection, updatedCollectionRows)
-  saveCollection(collection, updatedCollectionRows)
-}
-
-const getUpdatedRows = function (collectionRows, whereFunctions, set) {
+const getUpdatedRows = (collectionRows, whereFunctions, set) => {
   collectionRows = collectionRows.map((dbObj) => {
     for (let index = 0; index < whereFunctions.length; index++) {
-      const whereFunction = whereFunctions[index]
+      const whereFunction = whereFunctions[index];
 
       if (!whereFunction(dbObj)) {
-        return dbObj
+        return dbObj;
       }
     }
 
     for (let index = 0; index < set.length; index++) {
-      dbObj[set[index].key] = set[index].value
+      dbObj[set[index].key] = set[index].value;
     }
 
-    updatedValues++
+    updatedValues++;
 
-    return dbObj
-  })
+    return dbObj;
+  });
 
-  return collectionRows
-}
+  return collectionRows;
+};
 
-const createWhereFunctions = function (where) {
+const createWhereFunctions = (where) => {
   if (!Array.isArray(where)) {
-    where = [where]
+    where = [where];
   }
 
-  return where.map((w) => buildWhere(w))
-}
+  return where.map((w) => buildWhere(w));
+};
 
 module.exports = {
-  name: 'UPDATE',
-  execute: executeUpdate
-}
+  name: "UPDATE",
+  execute: executeUpdate,
+};
