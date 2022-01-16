@@ -37,9 +37,9 @@ db.once("ready", async () => {
 
   let i = 0;
 
-  col.on("dataInserted", (data) => {
-    console.log(data);
-  })
+  // col.on("dataInserted", (data) => {
+  //   console.log(data);
+  // })
 
   while (i < 5e3) {
     col.set(
@@ -52,6 +52,12 @@ db.once("ready", async () => {
 
     ++i;
   }
+
+  col.findOne({_index: 4985}).then((x) => {
+    console.log(x);
+  }).catch((err) => {
+    console.log(err);
+  })
 
   const done = Date.now();
 
