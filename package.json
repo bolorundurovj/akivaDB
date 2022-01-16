@@ -1,13 +1,11 @@
 {
 	"name": "akivadb",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
+	"description": "A Lightweight Schema-Free Object-Oriented LocalDatabase for Development and Educational Purposes",
+	"main": "lib/index.js",
 	"scripts": {
 		"repl": "node index.js repl",
-		"test": "jest",
-		"watch": "jest --watchAll",
-		"lint": "standard --fix"
+		"start": "node tests/test.js"
 	},
 	"repository": {
 		"type": "git",
