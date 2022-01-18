@@ -41,8 +41,8 @@ db.once("ready", async () => {
   //   console.log(data);
   // })
 
-  while (i < 5e3) {
-    col.set(
+  while (i < 10e3) {
+    col.insert(
       {
         variable: "aabbccddeeffgghhii",
         varID: `${Math.floor(Math.random() * 259153813599)}`,
