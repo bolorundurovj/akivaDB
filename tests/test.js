@@ -53,7 +53,7 @@ db.once("ready", async () => {
     ++i;
   }
 
-  col.findOne({_index: 4985}).then((x) => {
+  col.find({_index: 4985}).then((x) => {
     console.log(x);
   }).catch((err) => {
     console.log(err);
