@@ -1,11 +1,11 @@
 {
 	"name": "akivadb",
-	"version": "1.0.1-alpha.2",
+	"version": "1.0.1-alpha.2+001",
 	"description": "A Lightweight Schema-Free Object-Oriented LocalDatabase for Development and Educational Purposes",
 	"main": "lib/index.js",
 	"scripts": {
-		"repl": "node index.js repl",
-		"start": "node tests/test.js"
+		"repl": "node repl/index.js repl",
+		"test": "node tests/test.js"
 	},
 	"repository": {
 		"type": "git",
@@ -13,7 +13,7 @@
 	},
 	"keywords": [],
 	"author": "Bolorunduro Valiant-Joshua",
-	"license": "ISC",
+	"license": "BSD 3-Clause",
 	"bugs": {
 		"url": "https://github.com/bolorundurovj/akivaDB/issues"
 	},

@@ -107,5 +107,6 @@ dist
 *.akvdb
 *.akvdbc
 *.akvdbi
+*.sz
 
 database/
