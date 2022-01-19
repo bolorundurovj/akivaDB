@@ -1,0 +1,5 @@
+npm login
+npm publish
+
+npm login --scope=@OWNER --registry=https://npm.pkg.github.com
+npm publish --scope=@OWNER --registry=https://npm.pkg.github.com
