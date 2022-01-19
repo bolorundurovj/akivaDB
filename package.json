@@ -1,6 +1,6 @@
 {
 	"name": "akivadb",
-	"version": "1.0.1-alpha.2+001",
+	"version": "1.0.1-alpha.3",
 	"description": "A Lightweight Schema-Free Object-Oriented LocalDatabase for Development and Educational Purposes",
 	"main": "lib/index.js",
 	"scripts": {
