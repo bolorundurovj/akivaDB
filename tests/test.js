@@ -1,18 +1,17 @@
-const ls = require("../lib");
-const db = ls("database");
-const {EventEmitter} = require("events")
-const ee = new EventEmitter();
+const AkivaDB = require("../lib");
+const { generateUIDWithCollisionChecking } = require("../lib/utils/idGenerator");
+const db = AkivaDB("database");
 const ram = (process.memoryUsage().rss / 1024 / 1024).toFixed(1);
 
 console.log(`${ram}MB`);
 
-console.log(ls.version);
+console.log(AkivaDB.version);
 
 db.once("ready", async () => {
   console.log("Session Ready!");
 
   const col = db.collection({
-    name: "azwu",
+    name: "test",
   });
   const now = Date.now();
 
@@ -37,23 +36,28 @@ db.once("ready", async () => {
 
   let i = 0;
 
-  // col.on("dataInserted", (data) => {
-  //   console.log(data);
-  // })
+  col.on("dataInserted", (data) => {
+    console.log(data);
+  })
 
-  while (i < 10e3) {
+  while (i < 10) {
     col.insert(
       {
         variable: "aabbccddeeffgghhii",
-        varID: `${Math.floor(Math.random() * 259153813599)}`,
-      },
-      { _index: i }
+        varID: generateUIDWithCollisionChecking(),
+      }
     );
 
     ++i;
   }
 
-  col.find({_index: 4985}).then((x) => {
+  col.find({}).then((x) => {
+    console.log(x);
+  }).catch((err) => {
+    console.log(err);
+  })
+
+  col.findOne({ _id: '9ea95u' }).then((x) => {
     console.log(x);
   }).catch((err) => {
     console.log(err);
