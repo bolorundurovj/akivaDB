@@ -5,7 +5,8 @@
 	"main": "lib/index.js",
 	"scripts": {
 		"repl": "node repl/index.js repl",
-		"test": "node tests/test.js"
+		"test": "node tests/test.js",
+		"benchmark:time": "node benchmarks/time.js"
 	},
 	"repository": {
 		"type": "git",
