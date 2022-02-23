@@ -13,10 +13,10 @@ db2.on("insert", (x) => {
 
 let x = 1;
 while (x > 0) {
-    db.insertOne({ name: 'Jane Doe', count: x, date: new Date(), obj: { a: 4, b: 8 } }).then((a) => {
+    db.insert({ name: 'Jane Doe', count: x, date: new Date(), obj: { a: 4, b: 8 } }).then((a) => {
         console.log(a);
     })
-    db2.insertOne({ name: 'Jane Doe', count: x, date: new Date(), obj: { a: 4, b: 8 } }).then((a) => {
+    db2.insertMany({ name: 'Jane Doe', count: x, date: new Date(), obj: { a: 4, b: 8 } }).then((a) => {
         console.log(a);
     })
 

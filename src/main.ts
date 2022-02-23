@@ -163,10 +163,11 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   /**
    * Insert single document, returns created document.
    * @param newDoc
-   * @param options
+   * @param {{strict?: boolean}} options
+   * @param {boolean} options.strict If `true`, rejects on failed insert
    * @returns {DocPrivate<T>} doc
    */
-  insertOne(newDoc: Doc<T>, options?: { strict?: boolean }) {
+  insert(newDoc: Doc<T>, options?: { strict?: boolean }) {
     if (!isDoc(newDoc)) {
       if (options?.strict) return Promise.reject(INVALID_DOC(newDoc));
       return null;
@@ -176,10 +177,33 @@ export default class AkivaDB<T extends object> extends EventEmitter {
       throw new AkivaDBError(`Id ${newDoc._id} already exists`, 1);
     }
 
-    return Promise.resolve(this.addAndEmit(newDoc));
+    return Promise.resolve(this._addAndEmit(newDoc));
   }
 
-  addAndEmit = (doc: Doc<T>): DocPrivate<T> => {
+  /**
+   * Insert a document or multiple documents.
+   * @param docs document(s)
+   * @param {{strict?: boolean}} options
+   * @param {boolean} options.strict If `true`, rejects on first failed insert
+   * @returns documents
+   */
+  insertMany(docs: OneOrMore<Doc<T>>, options?: { strict?: boolean }) {
+    return Promise.all(
+      toArray(docs).map((newDoc) => this.insert(newDoc, options))
+    ).then((docs) =>
+      docs.reduce<Doc<T>[]>((acc, doc) => {
+        if (doc !== null) acc.push(doc);
+        return acc;
+      }, [])
+    );
+  }
+
+  /**
+   * Add document to database and emit `insert`
+   * @param {Doc<T>} doc
+   * @returns {DocPrivate<T>} doc
+   */
+  private _addAndEmit = (doc: Doc<T>): DocPrivate<T> => {
     const x = {
       ...doc,
       _id: !!doc._id ? doc._id.toString() : generateUIDByTimestamp(),
