@@ -300,7 +300,8 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     query: Query = {},
     options?: { projection?: P }
   ) {
-    if (!isQuery(query)) return Promise.reject(new AkivaDBError(INVALID_QUERY(query), 1));
+    if (!isQuery(query))
+      return Promise.reject(new AkivaDBError(INVALID_QUERY(query), 1));
 
     const docs = Array.from(this.list).reduce<Projection<DocPrivate<T>, P>[]>(
       (acc, _id) => {
@@ -373,5 +374,13 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     }
 
     return Promise.resolve(null);
+  }
+
+  /**
+   * Mark document as deleted against persistence.
+   * @param doc document
+   */
+  private deleteDoc(doc: DocPrivate<T>) {
+    this.map[doc._id] = { ...doc, $deleted: true };
   }
 }
