@@ -20,6 +20,9 @@ while (x > 0) {
     users.insert({ name: `Jane Doe - ${x}`, date: new Date(), obj: { a: x, b: Math.random() } }).then((a) => {
         // console.log(a);
     })
+    users.insert(`Jane Doe - ${x}`).then((a) => {
+        // console.log(a);
+    })
 
     x--;
 }
@@ -42,4 +45,4 @@ classes.insertMany(arr).then((a) => {
 //     console.log(c);
 // })
 
-classes.drop()
+// classes.drop()

@@ -78,7 +78,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
 
   /**
    * Reset `map` and `list`.
-   * 
+   *
    * Remove all listeners.
    */
   private flush() {
@@ -217,6 +217,10 @@ export default class AkivaDB<T extends object> extends EventEmitter {
       return null;
     }
 
+    if (!!newDoc?._id && containsSpecialChars(newDoc._id)) {
+      throw new AkivaDBError(`Id cannot contain special characters`, 1);
+    }
+
     if (!!newDoc?._id && this.list.has(newDoc._id.toString())) {
       throw new AkivaDBError(`Id ${newDoc._id} already exists`, 1);
     }
@@ -296,7 +300,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     query: Query = {},
     options?: { projection?: P }
   ) {
-    if (!isQuery(query)) return Promise.reject(INVALID_QUERY(query));
+    if (!isQuery(query)) return Promise.reject(new AkivaDBError(INVALID_QUERY(query), 1));
 
     const docs = Array.from(this.list).reduce<Projection<DocPrivate<T>, P>[]>(
       (acc, _id) => {

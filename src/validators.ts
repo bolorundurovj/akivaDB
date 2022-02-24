@@ -7,6 +7,7 @@ import * as dot from "@chronocide/dot-obj";
 import { INVALID_OPERATOR } from "./errors";
 import { Doc, DocPrivate, Modifiers, Operators, Query, Update } from "./types";
 import { AkivaDBError } from "./errorHandler";
+import { containsSpecialChars } from "./utils";
 
 /**
  * Validates if value is an object.
@@ -34,7 +35,9 @@ export const isObjectEmtpy = (x: object) => Object.keys(x).length === 0;
  * @param {string} x
  * @returns {boolean} boolean
  */
-export const isId = (x: string) => x.length > 0;
+export const isId = (x: string) => {
+  return typeof x === "string" && !containsSpecialChars(x)  &&  x.length > 0;
+};
 
 /**
  * Validates if value is a tag.
