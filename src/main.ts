@@ -78,10 +78,13 @@ export default class AkivaDB<T extends object> extends EventEmitter {
 
   /**
    * Reset `map` and `list`.
+   * 
+   * Remove all listeners.
    */
   private flush() {
     this.map = {};
     this.list = new Set();
+    this.removeAllListeners();
   }
 
   private add(doc: DocPrivate<T>) {
@@ -184,6 +187,20 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     });
 
     fs.writeFileSync(this.file, data.join("\n"));
+  }
+
+  /**
+   * Drop the database.
+   * @param {boolean} strict If `true` will delete the file on disk, else will reset the database.
+   */
+  drop(strict: boolean = false) {
+    this.flush();
+    if (!this.inMemory) {
+      this.persist();
+      if (strict && fs.existsSync(this.file)) {
+        fs.unlinkSync(this.file);
+      }
+    }
   }
 
   /**

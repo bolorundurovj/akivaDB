@@ -10,9 +10,9 @@ console.log('classes db', classes.name, classes.size, classes.memoryMode, classe
 //     console.log(x._id, "users db");
 // })
 
-// classes.on("insert", (x) => {
-//     console.log(x._id, "classes db");
-// })
+classes.on("insert", (x) => {
+    console.log(x._id, "classes db");
+})
 
 let x = 1;
 let y = 10;
@@ -41,3 +41,5 @@ classes.insertMany(arr).then((a) => {
 // classes.find().then(c => {
 //     console.log(c);
 // })
+
+classes.drop()
