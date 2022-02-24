@@ -29,6 +29,10 @@ classes.insertMany(arr).then((a) => {
     // console.log(a);
 })
 
+// classes.findById(["17f2b1123fd9c1fae09ff63", "17f2b11272c43d62ce7b716"]).then(x => {
+//     console.log(x);
+// })
+
 
 // users.findOne({ $string: { name: "Jane" } }, { projection: ['name', '_id'] }).then(c => {
 //     console.log(c);

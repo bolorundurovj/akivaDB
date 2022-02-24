@@ -248,6 +248,27 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   }
 
   /**
+   * Find document(s) by id.
+   * @param id  ID(s)
+   * @param {{projection?: P}} options
+   * @param {Array<string>} options.projection
+   * @returns {Promise<DocPrivate<T>[]>} documents
+   */
+  findById<P extends KeysOf<Doc<T>>>(
+    id: OneOrMore<string>,
+    options?: { projection?: P }
+  ) {
+    return Promise.all(
+      toArray(id).map((_id) => this.findOneById(_id, options?.projection))
+    ).then((docs) =>
+      docs.reduce<Projection<DocPrivate<T>, P>[]>((acc, doc) => {
+        if (doc !== null) acc.push(doc);
+        return acc;
+      }, [])
+    );
+  }
+
+  /**
    * Find all matching documents.
    * @param {Query} query
    * @param {{projection?: P}} options
@@ -295,7 +316,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * @param {string} _id Document ID
    * @param {Query} query Query Object
    * @param {P} projection Projection Array
-   * @returns
+   * @returns doc
    */
   private _findDoc<P extends KeysOf<Doc<T>>>(
     _id: string,
@@ -310,5 +331,26 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     }
 
     return null;
+  }
+
+  /**
+   * Retrieve document by id.
+   * @param {string} _id Document ID
+   * @param {Query} query Query Object
+   * @param {P} projection Projection Array
+   * @returns doc
+   */
+  findOneById<P extends KeysOf<Doc<T>>>(_id: string, projection?: P) {
+    if (!isId(_id)) return Promise.reject(new AkivaDBError(INVALID_ID(_id), 1));
+
+    const doc = this.get(_id);
+    if (doc) {
+      if (projection) {
+        return Promise.resolve(project(doc, projection));
+      }
+      return Promise.resolve(doc);
+    }
+
+    return Promise.resolve(null);
   }
 }
