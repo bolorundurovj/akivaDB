@@ -9,6 +9,9 @@ db.on("insert", (x) => {
 
 db2.on("insert", (x) => {
     console.log(x._id, 2);
+    db2.findOne({ name: x.name }, { projection: ['name', '_id'] }).then(c => {
+        console.log(c, 111);
+    })
 })
 
 let x = 1;

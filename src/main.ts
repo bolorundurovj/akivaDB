@@ -169,7 +169,8 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    */
   insert(newDoc: Doc<T>, options?: { strict?: boolean }) {
     if (!isDoc(newDoc)) {
-      if (options?.strict) return Promise.reject(INVALID_DOC(newDoc));
+      if (options?.strict)
+        return Promise.reject(new AkivaDBError(INVALID_DOC(newDoc), 1));
       return null;
     }
 
@@ -198,9 +199,24 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     );
   }
 
+  findOne<P extends KeysOf<Doc<T>>>(
+    query: Query = {},
+    options?: { projection?: P }
+  ) {
+    if (!isQuery(query))
+      return Promise.reject(new AkivaDBError(INVALID_QUERY(query), 1));
+
+    for (let i = 0, ids = Array.from(this.list); i < ids.length; i += 1) {
+      const doc = this._findDoc(ids[i], query, options?.projection);
+      if (doc) return Promise.resolve(doc);
+    }
+
+    return Promise.resolve(null);
+  }
+
   /**
    * Add document to database and emit `insert`
-   * @param {Doc<T>} doc
+   * @param {Doc<T>} doc Document
    * @returns {DocPrivate<T>} doc
    */
   private _addAndEmit = (doc: Doc<T>): DocPrivate<T> => {
@@ -215,4 +231,26 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     }
     return x;
   };
+
+  /**
+   * Retrieve document and match query.
+   * @param {string} _id Document ID
+   * @param {Query} query Query Object
+   * @param {P} projection Projection Array
+   * @returns
+   */
+  private _findDoc<P extends KeysOf<Doc<T>>>(
+    _id: string,
+    query: Query,
+    projection?: P
+  ) {
+    const doc = this.get(_id);
+
+    if (doc && isQueryMatch(doc, query)) {
+      if (projection) return project(doc, projection);
+      return doc;
+    }
+
+    return null;
+  }
 }

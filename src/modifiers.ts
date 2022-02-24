@@ -10,6 +10,7 @@ import { hasModifier } from "./validators";
  * @param {T} doc
  * @param {P} projection
  * @returns {Projection<T,P>} doc
+ * @todo Add `_id` by default
  */
 export const project = <T extends object, P extends KeysOf<T>>(
   doc: T,
