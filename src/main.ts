@@ -39,6 +39,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   private inMemory: boolean = false;
   private map: Record<string, DocPrivate<T>> = {};
   private list: Set<string> = new Set();
+  private dbName: string = "akivadb";
 
   /**
    * @param options.name - Database name, if empty, will run `AkivaDB` in-memory
@@ -53,6 +54,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     inMemory?: boolean;
   }) {
     super();
+    this.dbName = !!options?.name ? options?.name : "akivadb";
     if (options?.name && typeof options.name !== "string") {
       throw new AkivaDBError("Database name must be typeof string!", 0);
     }
@@ -99,12 +101,24 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     delete this.map[_id];
   }
 
+  public get name(): string {
+    return this.dbName;
+  }
+
   public get size(): number {
     return this.list.size;
   }
 
   public get fileSize(): string {
-    return humanReadableFileSize(statSync(this.file).size);
+    if (this.inMemory) {
+      return "N/A";
+    } else {
+      if (fs.existsSync(this.file)) {
+        return humanReadableFileSize(statSync(this.file).size);
+      } else {
+        return humanReadableFileSize(0);
+      }
+    }
   }
 
   public get memoryMode(): string {
@@ -211,6 +225,13 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     );
   }
 
+  /**
+   * Find single document.
+   * @param {Query} query
+   * @param {{projection?: P}} options
+   * @param {Array<string>} options.projection
+   * @returns {DocPrivate<T>} document
+   */
   findOne<P extends KeysOf<Doc<T>>>(
     query: Query = {},
     options?: { projection?: P }
@@ -224,6 +245,31 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     }
 
     return Promise.resolve(null);
+  }
+
+  /**
+   * Find all matching documents.
+   * @param {Query} query
+   * @param {{projection?: P}} options
+   * @param {Array<string>} options.projection
+   * @returns {DocPrivate<T>[]} documents
+   */
+  find<P extends KeysOf<Doc<T>>>(
+    query: Query = {},
+    options?: { projection?: P }
+  ) {
+    if (!isQuery(query)) return Promise.reject(INVALID_QUERY(query));
+
+    const docs = Array.from(this.list).reduce<Projection<DocPrivate<T>, P>[]>(
+      (acc, _id) => {
+        const doc = this._findDoc(_id, query, options?.projection);
+        if (doc) acc.push(doc);
+        return acc;
+      },
+      []
+    );
+
+    return Promise.resolve(docs);
   }
 
   /**
