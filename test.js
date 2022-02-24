@@ -3,6 +3,8 @@ const AkivaDB = require('./dist/main').default;
 const db = new AkivaDB({ name: 'test', root: 'akivadb', inMemory: false });
 const db2 = new AkivaDB({ name: 'test2', root: 'akivadb', inMemory: false });
 
+console.log(db, db.size, db.memoryMode, db.fileSize);
+
 db.on("insert", (x) => {
     console.log(x._id, 1);
 })

@@ -1,7 +1,7 @@
-import fs, { PathLike } from "fs";
+import fs, { PathLike, statSync } from "fs";
 import path from "path";
 import EventEmitter from "events";
-import { containsSpecialChars, toArray } from "./utils";
+import { containsSpecialChars, humanReadableFileSize, toArray } from "./utils";
 import {
   Doc,
   DocPrivate,
@@ -97,6 +97,18 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   private remove(_id: string) {
     this.list.delete(_id);
     delete this.map[_id];
+  }
+
+  public get size(): number {
+    return this.list.size;
+  }
+
+  public get fileSize(): string {
+    return humanReadableFileSize(statSync(this.file).size);
+  }
+
+  public get memoryMode(): string {
+    return this.inMemory ? "memory" : "disk";
   }
 
   /**
