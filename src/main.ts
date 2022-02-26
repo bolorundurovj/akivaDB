@@ -357,7 +357,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   /**
    * Delete a document by ID.
    * @param id document id
-   * @returns {Promise<boolean>} 1/0
+   * @returns {Promise<boolean>} boolean
    */
   async deleteOneById(id: string) {
     if (!isId(id)) {
@@ -377,12 +377,25 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   /**
    * Delete document(s) by id.
    * @param docs document(s)
-   * @returns {number} 1 or 0
+   * @returns {Promise<number>} 1 or 0
    */
   deleteById(docs: OneOrMore<string>) {
     return Promise.all(
       toArray(docs).map((_id) => this.deleteOneById(_id))
     ).then((n) => n.reduce<number>((acc, cur) => acc + boolToNumber(cur), 0));
+  }
+
+  /**
+   * Delete single document
+   * @param {Query} query
+   * @returns {Promise<boolean>} boolean
+   */
+  async deleteOne(query: Query = {}) {
+    const doc = await this.findOne(query);
+    if (!doc) return Promise.resolve(false);
+
+    this.deleteDoc(doc);
+    return Promise.resolve(true);
   }
 
   /**
