@@ -464,4 +464,24 @@ export default class AkivaDB<T extends object> extends EventEmitter {
 
     return null;
   }
+
+  /**
+   * Update document
+   * @param {DocPrivate<T>} doc Document
+   * @param {Update<T>} update
+   * @returns {DocPrivate<T>} document
+   */
+  private updateDoc(doc: DocPrivate<T>, update: Update<T>) {
+    const newDoc = isModifier(update)
+      ? modify(doc, update)
+      : { ...update, _id: doc._id };
+
+    this.map[doc._id] = newDoc;
+
+    this.emit("update", newDoc);
+    if (this.inMemory == false) {
+      this.persist();
+    }
+    return newDoc;
+  }
 }
