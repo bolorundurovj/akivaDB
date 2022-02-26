@@ -13,6 +13,9 @@ users.on("insert", (x) => {
 classes.on("insert", (x) => {
     console.log(x._id, "classes db");
 })
+classes.on("delete", (x) => {
+    console.log(x, "classes db del");
+})
 
 let x = 1;
 let y = 10;

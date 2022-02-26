@@ -418,6 +418,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    */
   private deleteDoc(doc: DocPrivate<T>) {
     this.map[doc._id] = { ...doc, $deleted: true };
+    this.emit("delete", doc);
     if (this.inMemory == false) {
       this.persist();
     }
@@ -446,6 +447,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * @param {string} _id Document ID
    * @param {Query} query Query Object
    * @param {P} projection Projection Array
+   * @todo Parse data types
    * @returns doc
    */
   private _findDoc<P extends KeysOf<Doc<T>>>(
