@@ -53,4 +53,8 @@ classes.deleteById(["17f37d00d29117e5d0ce35", "17f37c694052c36340add59"]).then((
     console.log(x);
 })
 
+classes.deleteOne({ name: "Class 10" }).then(x => {
+    console.log(x);
+})
+
 // classes.drop()
