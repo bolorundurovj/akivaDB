@@ -6,9 +6,9 @@ const classes = new AkivaDB({ name: 'classes', root: 'akivadb', inMemory: false 
 console.log('users db', users.name, users.size, users.memoryMode, users.fileSize);
 console.log('classes db', classes.name, classes.size, classes.memoryMode, classes.fileSize);
 
-// users.on("insert", (x) => {
-//     console.log(x._id, "users db");
-// })
+users.on("insert", (x) => {
+    console.log(x._id, "users db");
+})
 
 classes.on("insert", (x) => {
     console.log(x._id, "classes db");
@@ -20,9 +20,9 @@ while (x > 0) {
     users.insert({ name: `Jane Doe - ${x}`, date: new Date(), obj: { a: x, b: Math.random() } }).then((a) => {
         // console.log(a);
     })
-    users.insert(`Jane Doe - ${x}`).then((a) => {
-        // console.log(a);
-    })
+    // users.insert(`Jane Doe - ${x}`).then((a) => {
+    //     // console.log(a);
+    // })
 
     x--;
 }
@@ -44,5 +44,9 @@ classes.insertMany(arr).then((a) => {
 // classes.find().then(c => {
 //     console.log(c);
 // })
+
+classes.deleteOneById("17f37d00d29117e5d0ce35").then((x) => {
+    console.log(x);
+})
 
 // classes.drop()

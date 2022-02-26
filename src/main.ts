@@ -96,7 +96,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
 
   private get(_id: string): DocPrivate<T> | null {
     const doc = this.map[_id];
-    return !doc.$deleted ? doc : null;
+    return !doc?.$deleted ? doc : null;
   }
 
   private remove(_id: string) {
@@ -176,7 +176,9 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     this.list.forEach((_id) => {
       try {
         const doc = this.get(_id);
-        if (doc) data.push(JSON.stringify(doc));
+        if (doc) {
+          data.push(JSON.stringify(doc));
+        }
       } catch (err) {
         this.remove(_id);
 
@@ -212,8 +214,9 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    */
   insert(newDoc: Doc<T>, options?: { strict?: boolean }) {
     if (!isDoc(newDoc)) {
-      if (options?.strict)
+      if (options?.strict) {
         return Promise.reject(new AkivaDBError(INVALID_DOC(newDoc), 1));
+      }
       return null;
     }
 
@@ -236,14 +239,16 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * @returns documents
    */
   insertMany(docs: OneOrMore<Doc<T>>, options?: { strict?: boolean }) {
-    return Promise.all(
-      toArray(docs).map((newDoc) => this.insert(newDoc, options))
-    ).then((docs) =>
-      docs.reduce<Doc<T>[]>((acc, doc) => {
-        if (doc !== null) acc.push(doc);
-        return acc;
-      }, [])
-    );
+    {
+      return Promise.all(
+        toArray(docs).map((newDoc) => this.insert(newDoc, options))
+      ).then((docs) => {
+        docs.reduce<Doc<T>[]>((acc, doc) => {
+          if (doc !== null) acc.push(doc);
+          return acc;
+        }, []);
+      });
+    }
   }
 
   /**
@@ -257,12 +262,15 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     query: Query = {},
     options?: { projection?: P }
   ) {
-    if (!isQuery(query))
+    if (!isQuery(query)) {
       return Promise.reject(new AkivaDBError(INVALID_QUERY(query), 1));
+    }
 
     for (let i = 0, ids = Array.from(this.list); i < ids.length; i += 1) {
       const doc = this._findDoc(ids[i], query, options?.projection);
-      if (doc) return Promise.resolve(doc);
+      if (doc) {
+        return Promise.resolve(doc);
+      }
     }
 
     return Promise.resolve(null);
@@ -283,7 +291,9 @@ export default class AkivaDB<T extends object> extends EventEmitter {
       toArray(id).map((_id) => this.findOneById(_id, options?.projection))
     ).then((docs) =>
       docs.reduce<Projection<DocPrivate<T>, P>[]>((acc, doc) => {
-        if (doc !== null) acc.push(doc);
+        if (doc !== null) {
+          acc.push(doc);
+        }
         return acc;
       }, [])
     );
@@ -300,19 +310,74 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     query: Query = {},
     options?: { projection?: P }
   ) {
-    if (!isQuery(query))
+    if (!isQuery(query)) {
       return Promise.reject(new AkivaDBError(INVALID_QUERY(query), 1));
+    }
 
     const docs = Array.from(this.list).reduce<Projection<DocPrivate<T>, P>[]>(
       (acc, _id) => {
         const doc = this._findDoc(_id, query, options?.projection);
-        if (doc) acc.push(doc);
+        if (doc) {
+          acc.push(doc);
+        }
         return acc;
       },
       []
     );
 
     return Promise.resolve(docs);
+  }
+
+  /**
+   * Retrieve document by id.
+   * @param {string} _id Document ID
+   * @param {Query} query Query Object
+   * @param {P} projection Projection Array
+   * @returns doc
+   */
+  findOneById<P extends KeysOf<Doc<T>>>(_id: string, projection?: P) {
+    if (!isId(_id)) return Promise.reject(new AkivaDBError(INVALID_ID(_id), 1));
+
+    const doc = this.get(_id);
+    if (doc) {
+      if (projection) {
+        return Promise.resolve(project(doc, projection));
+      }
+      return Promise.resolve(doc);
+    }
+
+    return Promise.resolve(null);
+  }
+
+  /**
+   * Delete a document by ID.
+   * @param id document id
+   * @returns {Promise<boolean>} 1/0
+   */
+  async deleteOneById(id: string) {
+    if (!isId(id)) {
+      return Promise.reject(INVALID_ID(id));
+    }
+
+    const doc = await this.findOneById(id);
+
+    if (!!!doc) {
+      return Promise.resolve(false);
+    }
+
+    this.deleteDoc(doc);
+    return Promise.resolve(true);
+  }
+
+  /**
+   * Mark document as deleted against persistence.
+   * @param doc document
+   */
+  private deleteDoc(doc: DocPrivate<T>) {
+    this.map[doc._id] = { ...doc, $deleted: true };
+    if (this.inMemory == false) {
+      this.persist();
+    }
   }
 
   /**
@@ -353,34 +418,5 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     }
 
     return null;
-  }
-
-  /**
-   * Retrieve document by id.
-   * @param {string} _id Document ID
-   * @param {Query} query Query Object
-   * @param {P} projection Projection Array
-   * @returns doc
-   */
-  findOneById<P extends KeysOf<Doc<T>>>(_id: string, projection?: P) {
-    if (!isId(_id)) return Promise.reject(new AkivaDBError(INVALID_ID(_id), 1));
-
-    const doc = this.get(_id);
-    if (doc) {
-      if (projection) {
-        return Promise.resolve(project(doc, projection));
-      }
-      return Promise.resolve(doc);
-    }
-
-    return Promise.resolve(null);
-  }
-
-  /**
-   * Mark document as deleted against persistence.
-   * @param doc document
-   */
-  private deleteDoc(doc: DocPrivate<T>) {
-    this.map[doc._id] = { ...doc, $deleted: true };
   }
 }
