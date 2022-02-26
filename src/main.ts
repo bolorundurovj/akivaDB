@@ -1,7 +1,12 @@
 import fs, { PathLike, statSync } from "fs";
 import path from "path";
 import EventEmitter from "events";
-import { containsSpecialChars, humanReadableFileSize, toArray } from "./utils";
+import {
+  boolToNumber,
+  containsSpecialChars,
+  humanReadableFileSize,
+  toArray,
+} from "./utils";
 import {
   Doc,
   DocPrivate,
@@ -356,7 +361,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    */
   async deleteOneById(id: string) {
     if (!isId(id)) {
-      return Promise.reject(INVALID_ID(id));
+      return Promise.reject(new AkivaDBError(INVALID_ID(id), 1));
     }
 
     const doc = await this.findOneById(id);
@@ -367,6 +372,17 @@ export default class AkivaDB<T extends object> extends EventEmitter {
 
     this.deleteDoc(doc);
     return Promise.resolve(true);
+  }
+
+  /**
+   * Delete document(s) by id.
+   * @param docs document(s)
+   * @returns {number} 1 or 0
+   */
+  deleteById(docs: OneOrMore<string>) {
+    return Promise.all(
+      toArray(docs).map((_id) => this.deleteOneById(_id))
+    ).then((n) => n.reduce<number>((acc, cur) => acc + boolToNumber(cur), 0));
   }
 
   /**

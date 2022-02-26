@@ -28,3 +28,10 @@ export const humanReadableFileSize = (x: number) => {
   }
   return n.toFixed(n < 10 && l > 0 ? 1 : 0) + " " + units[l];
 };
+
+/**
+ * Covert boolean to number
+ * @param x boolean
+ * @returns {number} 1 or 0
+ */
+export const boolToNumber = (x: boolean) => (x ? 1 : 0);

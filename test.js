@@ -45,7 +45,11 @@ classes.insertMany(arr).then((a) => {
 //     console.log(c);
 // })
 
-classes.deleteOneById("17f37d00d29117e5d0ce35").then((x) => {
+// classes.deleteOneById("17f37d00d29117e5d0ce35").then((x) => {
+//     console.log(x);
+// })
+
+classes.deleteById(["17f37d00d29117e5d0ce35", "17f37c694052c36340add59"]).then((x) => {
     console.log(x);
 })
 
