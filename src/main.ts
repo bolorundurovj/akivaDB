@@ -399,6 +399,20 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   }
 
   /**
+   * Delete many documents. will delete all if no query is passed.
+   * @param {Query} query
+   * @returns {Promise<number>} deletedCount
+   */
+  async deleteMany(query: Query = {}) {
+    return this.find(query).then((docs) =>
+      docs.reduce<number>((acc, cur) => {
+        this.deleteDoc(cur);
+        return acc + 1;
+      }, 0)
+    );
+  }
+
+  /**
    * Mark document as deleted against persistence.
    * @param doc document
    */

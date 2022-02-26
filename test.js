@@ -57,4 +57,8 @@ classes.deleteOne({ name: "Class 10" }).then(x => {
     console.log(x);
 })
 
+classes.deleteMany().then(x => {
+    console.log(x);
+})
+
 // classes.drop()
