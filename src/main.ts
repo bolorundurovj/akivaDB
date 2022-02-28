@@ -451,6 +451,30 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   }
 
   /**
+   * Update document(s) by id.
+   * @param {OneOrMore<string>} x Document id(s)
+   * @param {Update<T>} update
+   * @param {{projection?: P}} options
+   * @param {Array<string>} options.projection
+   * @returns {Promise<Array<DocPrivate>>} documents
+   */
+  updateById<P extends KeysOf<Doc<T>>>(
+    x: OneOrMore<string>,
+    update: Update<T> = {},
+    options?: { projection?: P }
+  ) {
+    if (!isUpdate(update)) return Promise.reject(INVALID_UPDATE(update));
+    return Promise.all(
+      toArray(x).map((_id) => this.updateOneById(_id, update, options))
+    ).then((docs) =>
+      docs.reduce<Doc<T>[]>((acc, doc) => {
+        if (doc !== null) acc.push(doc);
+        return acc;
+      }, [])
+    );
+  }
+
+  /**
    * Add document to database and emit `insert`
    * @param {Doc<T>} doc Document
    * @returns {DocPrivate<T>} doc
