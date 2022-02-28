@@ -43,7 +43,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
 
   private inMemory: boolean = false;
   private map: Record<string, DocPrivate<T>> = {};
-  private list: Set<string> = new Set();
+  private indexes: Set<string> = new Set();
   private dbName: string = "akivadb";
 
   /**
@@ -88,12 +88,12 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    */
   private flush() {
     this.map = {};
-    this.list = new Set();
+    this.indexes = new Set();
     this.removeAllListeners();
   }
 
   private add(doc: DocPrivate<T>) {
-    this.list.add(doc._id);
+    this.indexes.add(doc._id);
     this.map[doc._id] = doc;
 
     return doc;
@@ -105,7 +105,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   }
 
   private remove(_id: string) {
-    this.list.delete(_id);
+    this.indexes.delete(_id);
     delete this.map[_id];
   }
 
@@ -114,7 +114,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   }
 
   public get size(): number {
-    return this.list.size;
+    return this.indexes.size;
   }
 
   public get fileSize(): string {
@@ -178,7 +178,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     if (!this.file) throw new AkivaDBError(MEMORY_MODE("persist"), 3);
 
     const data: string[] = [];
-    this.list.forEach((_id) => {
+    this.indexes.forEach((_id) => {
       try {
         const doc = this.get(_id);
         if (doc) {
@@ -229,7 +229,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
       throw new AkivaDBError(`Id cannot contain special characters`, 1);
     }
 
-    if (!!newDoc?._id && this.list.has(newDoc._id.toString())) {
+    if (!!newDoc?._id && this.indexes.has(newDoc._id.toString())) {
       throw new AkivaDBError(`Id ${newDoc._id} already exists`, 1);
     }
 
@@ -271,7 +271,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
       return Promise.reject(new AkivaDBError(INVALID_QUERY(query), 1));
     }
 
-    for (let i = 0, ids = Array.from(this.list); i < ids.length; i += 1) {
+    for (let i = 0, ids = Array.from(this.indexes); i < ids.length; i += 1) {
       const doc = this._findDoc(ids[i], query, options?.projection);
       if (doc) {
         return Promise.resolve(doc);
@@ -319,7 +319,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
       return Promise.reject(new AkivaDBError(INVALID_QUERY(query), 1));
     }
 
-    const docs = Array.from(this.list).reduce<Projection<DocPrivate<T>, P>[]>(
+    const docs = Array.from(this.indexes).reduce<Projection<DocPrivate<T>, P>[]>(
       (acc, _id) => {
         const doc = this._findDoc(_id, query, options?.projection);
         if (doc) {
