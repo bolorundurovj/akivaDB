@@ -1,4 +1,4 @@
-const AkivaDB = require('./dist/main').default;
+const AkivaDB = require('./lib/main').default;
 
 const users = new AkivaDB({ name: 'users', root: 'akivadb', inMemory: false });
 const classes = new AkivaDB({ name: 'classes', root: 'akivadb', inMemory: false });

@@ -4,6 +4,7 @@
 	"description": "A Lightweight Schema-Free Object-Oriented LocalDatabase for Development and Educational Purposes",
 	"main": "lib/index.js",
 	"scripts": {
+		"build": "npx tsc",
 		"repl": "node repl/index.js repl",
 		"test": "node tests/test.js",
 		"benchmark:time": "node benchmarks/time.js"
