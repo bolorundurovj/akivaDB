@@ -503,6 +503,37 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   }
 
   /**
+   * Update all documents matching query
+   * @param {Query} query
+   * @param {Update<T>} update
+   * @param {{projection?: P}} options
+   * @param {Array<string>} options.projection
+   * @returns {Promise<Array<DocPrivate>>} document
+   */
+  updateMany<P extends KeysOf<Doc<T>>>(
+    query: Query = {},
+    update: Update<T> = {},
+    options?: { projection?: P }
+  ) {
+    if (!isQuery(query)) {
+      return Promise.reject(new AkivaDBError(INVALID_QUERY(query), 1));
+    }
+    if (!isUpdate(update)) {
+      return Promise.reject(new AkivaDBError(INVALID_UPDATE(update), 1));
+    }
+
+    const newDocs = this.find(query).then((docs) =>
+      docs.map((doc) => {
+        const newDoc = this._updateDoc(doc, update);
+        if (options?.projection) return project(newDoc, options.projection);
+        return newDoc;
+      })
+    );
+
+    return Promise.resolve(newDocs);
+  }
+
+  /**
    * Add document to database and emit `insert`
    * @param {Doc<T>} doc Document
    * @returns {DocPrivate<T>} doc
