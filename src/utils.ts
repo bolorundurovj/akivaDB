@@ -1,12 +1,49 @@
 const CHUNK = 16384;
+const characterFormat: RegExp = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+
+/**
+ * Converts passed value to an array.
+ * @param {T | T[]} x
+ * @returns {Array} array
+ */
+export const toArray = <T>(x: T | T[]) => (Array.isArray(x) ? x : [x]);
+
+/**
+ * Checks for special characters.
+ * @param {string} x
+ * @returns {boolean} boolean
+ */
+export const containsSpecialChars = (x: string) => characterFormat.test(x);
+
+/**
+ * Convert bytes to human readable formats.
+ * @param {number} x
+ * @returns {string} formattedSize
+ */
+export const humanReadableFileSize = (x: number) => {
+  const units = ["bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+  let l = 0,
+    n = x || 0;
+  while (n >= 1024 && ++l) {
+    n = n / 1024;
+  }
+  return n.toFixed(n < 10 && l > 0 ? 1 : 0) + " " + units[l];
+};
+
+/**
+ * Covert boolean to number
+ * @param x boolean
+ * @returns {number} 1 or 0
+ */
+export const boolToNumber = (x: boolean) => (x ? 1 : 0);
 
 /**
  * Split array
  * @param {[]} array The array to split
  * @param {!Number} [pages] array to split every pages
- * @returns {Array<Array<any>>}
+ * @returns {Array<Array<any>>} array
  */
-async function splitArray(array, pages = 2) {
+export const splitArray = async (array: Array<any>, pages = 2) => {
   if (!array.length) return [];
 
   const chunks = [];
@@ -16,13 +53,14 @@ async function splitArray(array, pages = 2) {
   }
 
   return chunks;
-}
+};
 
 /**
  * Encode strings
  * @param {string} string The string to encode
+ * @returns encodedString
  */
-function encode(string) {
+export const encode = (string: string) => {
   const b64 = Buffer.from(string).toString("base64");
 
   let enc = "";
@@ -57,13 +95,14 @@ function encode(string) {
   }
 
   return enc;
-}
+};
 
 /**
  * Decode strings
  * @param {string} string The string to Decode
+ * @returns decodedString
  */
-function decode(string) {
+export const decode = (string: string) => {
   if (!string.length) return "";
 
   const strings = string.replace(/\n/g, "");
@@ -81,8 +120,8 @@ function decode(string) {
     while (i < str.length) {
       const code = `${str[i].charCodeAt(0)}`;
 
-      const first = 1 * code.substring(0, 2) + 33;
-      const second = 1 * code.substring(2) + 33;
+      const first = 1 * parseInt(code.substring(0, 2)) + 33;
+      const second = 1 * parseInt(code.substring(2)) + 33;
 
       codes.push(first);
 
@@ -101,10 +140,4 @@ function decode(string) {
   const decoded = Buffer.from(b64, "base64").toString();
 
   return decoded;
-}
-
-module.exports = {
-  splitArray,
-  encode,
-  decode,
 };

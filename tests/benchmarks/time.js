@@ -1,5 +1,5 @@
 // Check the processing time for each of the DB operations with load
-const AkivaDB = require('../lib');
+const AkivaDB = require('../../lib');
 let db = AkivaDB("database");
 
 (async () => {
