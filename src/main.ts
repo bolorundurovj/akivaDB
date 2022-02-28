@@ -82,7 +82,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   }
 
   /**
-   * Reset `map` and `list`.
+   * Reset `map` and `indexes`.
    *
    * Remove all listeners.
    */
