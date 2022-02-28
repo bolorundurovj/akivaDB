@@ -425,6 +425,32 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   }
 
   /**
+   * Update single document by ID
+   * @param {string} _id Document id
+   * @param {Update<T>} update
+   * @param {{projection?: P}} options
+   * @param {Array<string>} options.projection
+   * @returns {Promise<DocPrivate>} document
+   */
+  async updateOneById<P extends KeysOf<Doc<T>>>(
+    _id: string,
+    update: Update<T> = {},
+    options?: { projection?: P }
+  ) {
+    if (!isId(_id)) return Promise.reject(new AkivaDBError(INVALID_ID(_id), 1));
+    if (!isUpdate(update))
+      return Promise.reject(new AkivaDBError(INVALID_UPDATE(update), 1));
+
+    const doc = await this.findOneById(_id);
+    if (!doc) return Promise.resolve(null);
+
+    const newDoc = this._updateDoc(doc, update);
+    if (options?.projection)
+      return Promise.resolve(project(newDoc, options.projection));
+    return Promise.resolve(newDoc);
+  }
+
+  /**
    * Add document to database and emit `insert`
    * @param {Doc<T>} doc Document
    * @returns {DocPrivate<T>} doc
@@ -471,7 +497,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * @param {Update<T>} update
    * @returns {DocPrivate<T>} document
    */
-  private updateDoc(doc: DocPrivate<T>, update: Update<T>) {
+  private _updateDoc(doc: DocPrivate<T>, update: Update<T>) {
     const newDoc = isModifier(update)
       ? modify(doc, update)
       : { ...update, _id: doc._id };
