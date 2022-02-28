@@ -463,7 +463,8 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     update: Update<T> = {},
     options?: { projection?: P }
   ) {
-    if (!isUpdate(update)) return Promise.reject(INVALID_UPDATE(update));
+    if (!isUpdate(update))
+      return Promise.reject(new AkivaDBError(INVALID_UPDATE(update), 1));
     return Promise.all(
       toArray(x).map((_id) => this.updateOneById(_id, update, options))
     ).then((docs) =>
@@ -472,6 +473,33 @@ export default class AkivaDB<T extends object> extends EventEmitter {
         return acc;
       }, [])
     );
+  }
+
+  /**
+   * Update single document matching query
+   * @param {Query} query
+   * @param {Update<T>} update
+   * @param {{projection?: P}} options
+   * @param {Array<string>} options.projection
+   * @returns {Promise<DocPrivate>} document
+   */
+  async updateOne<P extends KeysOf<Doc<T>>>(
+    query: Query = {},
+    update: Update<T> = {},
+    options?: { projection?: P }
+  ) {
+    if (!isQuery(query))
+      return Promise.reject(new AkivaDBError(INVALID_QUERY(query), 1));
+    if (!isUpdate(update))
+      return Promise.reject(new AkivaDBError(INVALID_UPDATE(update), 1));
+
+    const doc = await this.findOne(query);
+    if (!doc) return Promise.resolve(null);
+
+    const newDoc = this._updateDoc(doc, update);
+    if (options?.projection)
+      return Promise.resolve(project(newDoc, options.projection));
+    return Promise.resolve(newDoc);
   }
 
   /**
