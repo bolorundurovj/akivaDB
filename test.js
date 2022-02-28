@@ -4,7 +4,7 @@ const users = new AkivaDB({ name: 'users', root: 'akivadb', inMemory: false });
 const classes = new AkivaDB({ name: 'classes', root: 'akivadb', inMemory: false });
 
 console.log('users db', users.name, users.size, users.memoryMode, users.fileSize);
-console.log('classes db', classes.name, classes.size, classes.memoryMode, classes.fileSize);
+console.log('classes db', classes.name, classes.size, classes.memoryMode, classes.fileSize, classes.version);
 
 users.on("insert", (x) => {
     console.log(x._id, "users db");

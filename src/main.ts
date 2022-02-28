@@ -117,6 +117,10 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     return this.indexes.size;
   }
 
+  public get version(): string {
+    return require("../package.json").version;
+  }
+
   public get fileSize(): string {
     if (this.inMemory) {
       return "N/A";
@@ -319,16 +323,15 @@ export default class AkivaDB<T extends object> extends EventEmitter {
       return Promise.reject(new AkivaDBError(INVALID_QUERY(query), 1));
     }
 
-    const docs = Array.from(this.indexes).reduce<Projection<DocPrivate<T>, P>[]>(
-      (acc, _id) => {
-        const doc = this._findDoc(_id, query, options?.projection);
-        if (doc) {
-          acc.push(doc);
-        }
-        return acc;
-      },
-      []
-    );
+    const docs = Array.from(this.indexes).reduce<
+      Projection<DocPrivate<T>, P>[]
+    >((acc, _id) => {
+      const doc = this._findDoc(_id, query, options?.projection);
+      if (doc) {
+        acc.push(doc);
+      }
+      return acc;
+    }, []);
 
     return Promise.resolve(docs);
   }
@@ -410,18 +413,6 @@ export default class AkivaDB<T extends object> extends EventEmitter {
         return acc + 1;
       }, 0)
     );
-  }
-
-  /**
-   * Mark document as deleted against persistence.
-   * @param doc document
-   */
-  private deleteDoc(doc: DocPrivate<T>) {
-    this.map[doc._id] = { ...doc, $deleted: true };
-    this.emit("delete", doc);
-    if (this.inMemory == false) {
-      this.persist();
-    }
   }
 
   /**
@@ -550,6 +541,18 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     }
     return x;
   };
+
+  /**
+   * Mark document as deleted against persistence.
+   * @param doc document
+   */
+  private deleteDoc(doc: DocPrivate<T>) {
+    this.map[doc._id] = { ...doc, $deleted: true };
+    this.emit("delete", doc);
+    if (this.inMemory == false) {
+      this.persist();
+    }
+  }
 
   /**
    * Retrieve document and match query.
