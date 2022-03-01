@@ -220,6 +220,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * @param {{strict?: boolean}} options
    * @param {boolean} options.strict If `true`, rejects on failed insert
    * @returns {DocPrivate<T>} doc
+   * @todo optimize processing time
    */
   insert(newDoc: Doc<T>, options?: { strict?: boolean }) {
     if (!isDoc(newDoc)) {
@@ -246,6 +247,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * @param {{strict?: boolean}} options
    * @param {boolean} options.strict If `true`, rejects on first failed insert
    * @returns documents
+   * @todo optimize processing time
    */
   insertMany(docs: OneOrMore<Doc<T>>, options?: { strict?: boolean }) {
     {
@@ -384,6 +386,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * Delete document(s) by id.
    * @param docs document(s)
    * @returns {Promise<number>} 1 or 0
+   * @todo return array of deleted ids
    */
   deleteById(docs: OneOrMore<string>) {
     return Promise.all(
@@ -408,6 +411,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * Delete many documents. will delete all if no query is passed.
    * @param {Query} query
    * @returns {Promise<number>} deletedCount
+   * @todo retrun array of deleted documents
    */
   async deleteMany(query: Query = {}) {
     return this.find(query).then((docs) =>
