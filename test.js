@@ -32,7 +32,7 @@ while (x > 0) {
 
 let arr = Array.from({ length: y }, (x, i) => ({ name: `Class ${y}`, students: i + 1, createdAt: new Date() }))
 classes.insertMany(arr).then((a) => {
-    // console.log(a);
+    console.log(a);
 })
 
 // classes.findById(["17f2b1123fd9c1fae09ff63", "17f2b11272c43d62ce7b716"]).then(x => {
@@ -52,16 +52,16 @@ classes.insertMany(arr).then((a) => {
 //     console.log(x);
 // })
 
-classes.deleteById(["17f37d00d29117e5d0ce35", "17f37c694052c36340add59"]).then((x) => {
-    console.log(x);
-})
+// classes.deleteById(["17f37d00d29117e5d0ce35", "17f37c694052c36340add59"]).then((x) => {
+//     console.log(x);
+// })
 
-classes.deleteOne({ name: "Class 10" }).then(x => {
-    console.log(x);
-})
+// classes.deleteOne({ name: "Class 10" }).then(x => {
+//     console.log(x);
+// })
 
-classes.deleteMany().then(x => {
-    console.log(x);
-})
+// classes.deleteMany().then(x => {
+//     console.log(x);
+// })
 
 // classes.drop()

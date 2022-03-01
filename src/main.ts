@@ -252,10 +252,13 @@ export default class AkivaDB<T extends object> extends EventEmitter {
       return Promise.all(
         toArray(docs).map((newDoc) => this.insert(newDoc, options))
       ).then((docs) => {
-        docs.reduce<Doc<T>[]>((acc, doc) => {
-          if (doc !== null) acc.push(doc);
+        const arr = docs.reduce<DocPrivate<T>[]>((acc, doc) => {
+          if (doc !== null) {
+            acc.push(doc);
+          }
           return acc;
         }, []);
+        return arr;
       });
     }
   }
