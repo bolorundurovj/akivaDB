@@ -376,7 +376,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
       return Promise.resolve(false);
     }
 
-    this.deleteDoc(doc);
+    this._deleteDoc(doc);
     return Promise.resolve(true);
   }
 
@@ -400,7 +400,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     const doc = await this.findOne(query);
     if (!doc) return Promise.resolve(false);
 
-    this.deleteDoc(doc);
+    this._deleteDoc(doc);
     return Promise.resolve(true);
   }
 
@@ -412,7 +412,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   async deleteMany(query: Query = {}) {
     return this.find(query).then((docs) =>
       docs.reduce<number>((acc, cur) => {
-        this.deleteDoc(cur);
+        this._deleteDoc(cur);
         return acc + 1;
       }, 0)
     );
@@ -549,7 +549,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * Mark document as deleted against persistence.
    * @param doc document
    */
-  private deleteDoc(doc: DocPrivate<T>) {
+  private _deleteDoc(doc: DocPrivate<T>) {
     this.map[doc._id] = { ...doc, $deleted: true };
     this.emit("delete", doc);
     if (this.inMemory == false) {
