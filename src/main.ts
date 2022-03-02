@@ -219,7 +219,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * @param newDoc
    * @param {{strict?: boolean}} options
    * @param {boolean} options.strict If `true`, rejects on failed insert
-   * @returns {DocPrivate<T>} doc
+   * @returns {Promise<DocPrivate<T>>} doc
    * @todo optimize processing time
    */
   insert(newDoc: Doc<T>, options?: { strict?: boolean }) {
@@ -319,6 +319,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * @param {{projection?: P}} options
    * @param {Array<string>} options.projection
    * @returns {DocPrivate<T>[]} documents
+   * @todo add sort to options
    */
   find<P extends KeysOf<Doc<T>>>(
     query: Query = {},
