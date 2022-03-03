@@ -7,7 +7,7 @@
 		"build": "npx tsc",
 		"repl": "node repl/index.js repl",
 		"test": "node tests/test.js",
-		"benchmark:time": "node benchmarks/time.js"
+		"benchmark:time": "node tests/benchmarks/time.js"
 	},
 	"repository": {
 		"type": "git",
