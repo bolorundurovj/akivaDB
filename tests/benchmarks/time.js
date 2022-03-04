@@ -2,136 +2,200 @@
 const AkivaDB = require("../../lib/main").default;
 const saved = new AkivaDB({ name: "saved", root: "akivadb", inMemory: false });
 const inmemory = new AkivaDB({
-    name: "inmemory",
-    root: "akivadb",
-    inMemory: true,
+  name: "inmemory",
+  root: "akivadb",
+  inMemory: true,
 });
-
-let ID = "inmemory";
-let IDS = [];
 
 // delete all records
 (async () => {
-    await saved.drop();
-    await inmemory.deleteMany();
+  await saved.drop();
+  await inmemory.deleteMany();
 })();
 
-let dumpData = (value) => {
-    console.log(value)
-}
-
-console.log(saved.dbName, saved.inMemory, saved.memoryMode, saved.version);
+console.log(
+  ` DB Name: ${saved.dbName} \n`,
+  `InMemory: ${saved.inMemory}\n`,
+  `Memory Mode: ${saved.memoryMode} \n`,
+  `DB Version: ${saved.version}\n`
+);
 
 /**
- * 1,000,000 default
+ * 1,000 default
  */
-let x = 1e6;
+let x = 1e3;
 
 let arg = parseInt(process.argv[2]);
 
 if (process.argv[2] && typeof arg === "number") {
-    x = arg;
+  x = arg;
 }
 
 console.log(
-    "/****************** Test for " + x + " documents(s) persisted *************/"
+  "/****************** Test for " + x + " documents(s) persisted *************/"
 );
 
 console.log("File size at beginning : ", saved.size, saved.fileSize);
 
 console.time(x + " : Insert(s)");
 for (var i = 0; i < x; i++) {
-    // (async () => {
-    //     await saved.insert({
-    //         title: "AkivaDB rocks " + i,
-    //         published: "today " + i,
-    //         rating: "5 stars " + i,
-    //     });
-    // })();
-    saved
-        .insert({
-            title: "AkivaDB rocks " + i,
-            published: "today " + i,
-            rating: "5 stars " + i,
-        })
-        .then((x) => {
-            console.log(1);
-            ID = x._id;
-            IDS.push(x._id);
-        })
-        .catch((err) => {
-            console.error(err);
-        });
+  (async () => {
+    await saved.insert({
+      title: "AkivaDB rocks " + i,
+      published: "today " + i,
+      rating: "5 stars " + i,
+      _id: `${i}`,
+    });
+  })();
 }
 console.timeEnd(x + " : Insert(s)");
 
 console.time(x + " : Insert Many");
 let arr = Array.from({ length: x }, (a, i) => ({
-    name: `Class ${x}`,
-    students: i + 1,
-    createdAt: new Date(),
+  name: `Class Arr ${x}`,
+  students: i + 1,
+  createdAt: new Date(),
+  _id: `arr${i}`,
 }));
-// saved.insertMany(arr).then((s) => {
-//     console.log(s);
-// })
-async () => {
-    await saved.insertMany(arr);
-};
+(async () => {
+  await saved.insertMany(arr);
+})();
 console.timeEnd(x + " : Insert Many");
 
 console.time(x + " : Find without query");
 (async () => {
-    let resp = await saved.find({});
-    console.log(resp);
+  await saved.find({});
 })();
 console.timeEnd(x + " : Find without query");
 
 console.time(x + " : Find with query");
 (async () => {
-    let resp = await saved.find({ title: "AkivaDB rocks 1" });
-    console.log(resp);
+  await saved.find({ title: "AkivaDB rocks 1" });
 })();
 console.timeEnd(x + " : Find with query");
 
 console.time(x + " : Find One without query");
 (async () => {
-    await saved.findOne({});
+  await saved.findOne({});
 })();
 console.timeEnd(x + " : Find One without query");
 
 console.time(x + " : Find One with query");
 (async () => {
-    await saved.findOne({ title: "AkivaDB rocks 1" });
+  await saved.findOne({ title: "AkivaDB rocks 1" });
 })();
 console.timeEnd(x + " : Find One with query");
 
 console.time(x + " : Find One by ID");
 (async () => {
-    let a = await saved.findOneById(ID);
-    console.log(a);
+  await saved.findOneById(x / 2);
 })();
 console.timeEnd(x + " : Find One by ID");
 
 console.time(x + " : Find Many by ID");
 (async () => {
-    let a = await saved.findById([...IDS]);
-    console.log(a);
+  await saved.findById([1, x / 2, x]);
 })();
 console.timeEnd(x + " : Find Many by ID");
 
 console.time(x + " : Update One");
 (async () => {
-    await saved.updateOne(
-        { title: "AkivaDB rocks 1" },
-        { title: "AkivaDB is awesome" }
-    );
+  await saved.updateOne(
+    { title: "AkivaDB rocks 1" },
+    { _id: "1", rating: "AkivaDB is awesome" }
+  );
 })();
 console.timeEnd(x + " : Update One");
 
 console.log("File size at end : ", saved.size, saved.fileSize);
 
 console.log(
-    "/****************** Test for " + x + " documents(s) *************/\n\n"
+  "/****************** Test for " +
+    x +
+    " documents(s) persisted *************/\n\n"
+);
+
+console.log(
+  ` DB Name: ${inmemory.dbName} \n`,
+  `InMemory: ${inmemory.inMemory}\n`,
+  `Memory Mode: ${inmemory.memoryMode} \n`,
+  `DB Version: ${inmemory.version}\n`
+);
+
+console.log(
+  "/****************** Test for " + x + " documents(s) inmemory *************/"
+);
+
+console.log("File size at beginning : ", inmemory.size, inmemory.fileSize);
+
+console.time(x + " : Insert(s)");
+for (var i = 0; i < x; i++) {
+  (async () => {
+    await inmemory.insert({
+      title: "AkivaDB rocks " + i,
+      published: "today " + i,
+      rating: "5 stars " + i,
+      _id: `${i}`,
+    });
+  })();
+}
+console.timeEnd(x + " : Insert(s)");
+
+console.time(x + " : Insert Many");
+(async () => {
+  await inmemory.insertMany(arr);
+})();
+console.timeEnd(x + " : Insert Many");
+
+console.time(x + " : Find without query");
+(async () => {
+  await inmemory.find({});
+})();
+console.timeEnd(x + " : Find without query");
+
+console.time(x + " : Find with query");
+(async () => {
+  await inmemory.find({ title: "AkivaDB rocks 1" });
+})();
+console.timeEnd(x + " : Find with query");
+
+console.time(x + " : Find One without query");
+(async () => {
+  await inmemory.findOne({});
+})();
+console.timeEnd(x + " : Find One without query");
+
+console.time(x + " : Find One with query");
+(async () => {
+  await inmemory.findOne({ title: "AkivaDB rocks 1" });
+})();
+console.timeEnd(x + " : Find One with query");
+
+console.time(x + " : Find One by ID");
+(async () => {
+  await inmemory.findOneById(x / 2);
+})();
+console.timeEnd(x + " : Find One by ID");
+
+console.time(x + " : Find Many by ID");
+(async () => {
+  await inmemory.findById([1, x / 2, x]);
+})();
+console.timeEnd(x + " : Find Many by ID");
+
+console.time(x + " : Update One");
+(async () => {
+  await inmemory.updateOne(
+    { title: "AkivaDB rocks 1" },
+    { _id: "1", rating: "AkivaDB is awesome" }
+  );
+})();
+console.timeEnd(x + " : Update One");
+
+console.log("File size at end : ", inmemory.size, inmemory.fileSize);
+
+console.log(
+  "/****************** Test for " + x + " documents(s) inmemory *************/\n\n"
 );
 
 process.exit();
