@@ -71,6 +71,11 @@ classes.updateById(updateObj._id, updateObj).then((a) => {
   // console.log(a);
 });
 
+updateObj.students = 1e4;
+classes.updateOne({students: updateObj.students}, updateObj).then((a) => {
+  // console.log(a);
+});
+
 classes.deleteOneById("17f37d00d29117e5d0ce35").then((x) => {
   console.log(x);
 });
@@ -96,9 +101,9 @@ classes.deleteOne({ name: "Class 10" }).then((x) => {
 // })
 
 // classes.drop()
-users.updateMany(
-    { name: "Jane Doe - 1" },
-    { name: "AkivaDB is awesome" }
-).then((x) => {
-    console.log(x);
-})
+// classes.updateMany(
+//     { name: "Jane Doe - 1" },
+//     { name: "AkivaDB is awesome" }
+// ).then((x) => {
+//     console.log(x);
+// })
