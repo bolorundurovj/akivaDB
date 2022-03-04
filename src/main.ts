@@ -219,7 +219,8 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * @param newDoc
    * @param {{strict?: boolean}} options
    * @param {boolean} options.strict If `true`, rejects on failed insert
-   * @returns {DocPrivate<T>} doc
+   * @returns {Promise<DocPrivate<T>>} doc
+   * @todo optimize processing time
    */
   insert(newDoc: Doc<T>, options?: { strict?: boolean }) {
     if (!isDoc(newDoc)) {
@@ -246,16 +247,20 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * @param {{strict?: boolean}} options
    * @param {boolean} options.strict If `true`, rejects on first failed insert
    * @returns documents
+   * @todo optimize processing time
    */
   insertMany(docs: OneOrMore<Doc<T>>, options?: { strict?: boolean }) {
     {
       return Promise.all(
         toArray(docs).map((newDoc) => this.insert(newDoc, options))
       ).then((docs) => {
-        docs.reduce<Doc<T>[]>((acc, doc) => {
-          if (doc !== null) acc.push(doc);
+        const arr = docs.reduce<DocPrivate<T>[]>((acc, doc) => {
+          if (doc !== null) {
+            acc.push(doc);
+          }
           return acc;
         }, []);
+        return arr;
       });
     }
   }
@@ -314,6 +319,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * @param {{projection?: P}} options
    * @param {Array<string>} options.projection
    * @returns {DocPrivate<T>[]} documents
+   * @todo add sort to options
    */
   find<P extends KeysOf<Doc<T>>>(
     query: Query = {},
@@ -373,7 +379,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
       return Promise.resolve(false);
     }
 
-    this.deleteDoc(doc);
+    this._deleteDoc(doc);
     return Promise.resolve(true);
   }
 
@@ -381,6 +387,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * Delete document(s) by id.
    * @param docs document(s)
    * @returns {Promise<number>} 1 or 0
+   * @todo return array of deleted ids
    */
   deleteById(docs: OneOrMore<string>) {
     return Promise.all(
@@ -397,7 +404,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     const doc = await this.findOne(query);
     if (!doc) return Promise.resolve(false);
 
-    this.deleteDoc(doc);
+    this._deleteDoc(doc);
     return Promise.resolve(true);
   }
 
@@ -405,11 +412,12 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * Delete many documents. will delete all if no query is passed.
    * @param {Query} query
    * @returns {Promise<number>} deletedCount
+   * @todo retrun array of deleted documents
    */
   async deleteMany(query: Query = {}) {
     return this.find(query).then((docs) =>
       docs.reduce<number>((acc, cur) => {
-        this.deleteDoc(cur);
+        this._deleteDoc(cur);
         return acc + 1;
       }, 0)
     );
@@ -546,7 +554,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * Mark document as deleted against persistence.
    * @param doc document
    */
-  private deleteDoc(doc: DocPrivate<T>) {
+  private _deleteDoc(doc: DocPrivate<T>) {
     this.map[doc._id] = { ...doc, $deleted: true };
     this.emit("delete", doc);
     if (this.inMemory == false) {

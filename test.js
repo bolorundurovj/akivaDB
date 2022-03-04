@@ -96,3 +96,9 @@ classes.deleteOne({ name: "Class 10" }).then((x) => {
 // })
 
 // classes.drop()
+users.updateMany(
+    { name: "Jane Doe - 1" },
+    { name: "AkivaDB is awesome" }
+).then((x) => {
+    console.log(x);
+})
