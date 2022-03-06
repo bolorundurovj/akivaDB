@@ -67,7 +67,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
       throw new AkivaDBError(DB_CONTAINS_SPECIAL_CHARS(options.name), 0);
     }
 
-    if (!!options?.inMemory) {
+    if (!!options?.inMemory || !!!options?.name || !!!options?.root) {
       this.inMemory = true;
     }
 
