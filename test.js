@@ -1,9 +1,6 @@
 const AkivaDB = require("./lib/main").default;
 
 const classes = new AkivaDB({
-  name: "classes",
-  root: "akivadb",
-  inMemory: false,
 });
 console.log(
   "classes db",
