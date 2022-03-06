@@ -1,13 +1,16 @@
 <div align="center">
-  <img src="/assets/icon.svg" width="128" alt="AkivaDB">
+  <!-- <img src="/assets/icon.svg" width="128" alt="AkivaDB"> -->
 
   <h1>AkivaDB</h1>
   <p><b>AkivaDB</b> is a modern, promise-based, strongly-typed, embeddable database for <a href="https://nodejs.org/en/">node.js</a>.</p>
 </div>
 
 <div align="center">
+    <img alt="AkivaDB" src="https://nodei.co/npm/akivadb.png?downloads=true&stars=true" />
+</div>
+<div align="center">
   <a href="/LICENSE">
-    <img alt="License GPLv3" src="https://img.shields.io/badge/license-GPLv3-blue.svg" />
+    <img alt="License GPLv3" src="https://img.shields.io/badge/license-BSD-blue.svg" />
   </a>
   <a href="https://www.npmjs.com/package/akivadb">
     <img alt="NPM" src="https://img.shields.io/npm/v/akivadb?label=npm">
@@ -140,6 +143,7 @@ db.load()
 Calling `load()` will return an array of corrupted raw data (string), which can be re-inserted before calling `persist()`. -->
 
 ### Events
+
 ```JS
 db.on('insert', (doc) => {
   //Logs inserted document
