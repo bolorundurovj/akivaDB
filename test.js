@@ -1,6 +1,8 @@
 const AkivaDB = require("./lib/main").default;
 
 const classes = new AkivaDB({
+  name: "classes",
+  root: "akivadb"
 });
 console.log(
   "classes db",
@@ -98,9 +100,9 @@ classes.deleteOne({ name: "Class 10" }).then((x) => {
 // })
 
 // classes.drop()
-// classes.updateMany(
-//     { name: "Jane Doe - 1" },
-//     { name: "AkivaDB is awesome" }
-// ).then((x) => {
-//     console.log(x);
-// })
+classes.updateMany(
+    { name: "Jane Doe - 1" },
+    { name: "AkivaDB is awesome" }
+).then((x) => {
+    console.log(x);
+})
