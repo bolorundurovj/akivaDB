@@ -7,7 +7,8 @@
 		"build": "npx tsc",
 		"repl": "node repl/index.js repl",
 		"test": "node tests/test.js",
-		"benchmark:time": "node tests/benchmarks/time.js"
+		"benchmark:time": "node tests/benchmarks/time.js",
+		"bench": "tsc && node tests/benchmarks.js"
 	},
 	"repository": {
 		"type": "git",
@@ -22,6 +23,7 @@
 	"homepage": "https://github.com/bolorundurovj/akivaDB",
 	"devDependencies": {
 		"@types/node": "^17.0.18",
+		"benchmark": "^2.1.4",
 		"jest": "27.4.5",
 		"standard": "^16.0.4",
 		"typescript": "^4.5.5"
@@ -30,8 +32,6 @@
 		"@chronocide/dot-obj": "^1.3.1",
 		"crypto": "^1.0.1",
 		"fast-deep-equal": "^3.1.3",
-		"repl": "^0.1.3",
-		"rfdc": "^1.3.0",
-		"workerpool": "^6.2.0"
+		"rfdc": "^1.3.0"
 	}
 }
