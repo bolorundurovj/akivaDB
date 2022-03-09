@@ -36,7 +36,7 @@ export const isObjectEmtpy = (x: object) => Object.keys(x).length === 0;
  * @returns {boolean} boolean
  */
 export const isId = (x: string) => {
-  return typeof x === "string" && !containsSpecialChars(x)  &&  x.length > 0;
+  return typeof x === "string" && !containsSpecialChars(x) && x.length > 0;
 };
 
 /**
@@ -118,7 +118,13 @@ export const isQuery = (x: unknown): x is Query =>
  */
 export const isModifier = (x: unknown): x is Partial<Modifiers> =>
   isObject(x) &&
-  dot.every(x, (entry) => !hasKey(entry, "$deleted") && !hasKey(entry, "_id"));
+  dot.every(
+    x,
+    (entry) =>
+      !hasKey(entry, "$deleted") &&
+      !hasKey(entry, "_id") &&
+      (hasKey(entry, "$push") || hasKey(entry, "$set") || hasKey(entry, "$add"))
+  );
 
 /**
  * Validates if value is a update op.
@@ -127,8 +133,11 @@ export const isModifier = (x: unknown): x is Partial<Modifiers> =>
  * @param {unknown} x
  * @returns {boolean} boolean
  */
-export const isUpdate = <T>(x: unknown): x is Update<T> =>
-  isObject(x) && !(isDoc(x) && isModifier(x)) && (isDoc(x) || isModifier(x));
+export const isUpdate = <T>(x: unknown): x is Update<T> => {
+  return (
+    isObject(x) && !(isDoc(x) && isModifier(x)) && (isDoc(x) || isModifier(x))
+  );
+};
 
 /**
  * Validates if operator exists and is valid.
