@@ -8,7 +8,8 @@
 		"repl": "node repl/index.js repl",
 		"test": "node tests/test.js",
 		"benchmark:time": "node tests/benchmarks/time.js",
-		"bench": "tsc && node tests/benchmarks.js"
+		"bench:ops": "tsc && node tests/benchmarks/benchmarks.js",
+		"bench:rps": "tsc && node tests/benchmarks/benchmark.js"
 	},
 	"repository": {
 		"type": "git",
@@ -24,6 +25,7 @@
 	"devDependencies": {
 		"@types/node": "^17.0.18",
 		"benchmark": "^2.1.4",
+		"benchmarkify": "^3.0.0",
 		"jest": "27.4.5",
 		"standard": "^16.0.4",
 		"typescript": "^4.5.5"
