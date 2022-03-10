@@ -10,7 +10,7 @@
 </div>
 <div align="center">
   <a href="/LICENSE">
-    <img alt="License GPLv3" src="https://img.shields.io/badge/license-BSD-blue.svg" />
+    <img alt="License GPLv3" src="https://img.shields.io/badge/license-BSD--3--Clause-blue.svg" />
   </a>
   <a href="https://www.npmjs.com/package/akivadb">
     <img alt="NPM" src="https://img.shields.io/npm/v/akivadb?label=npm">
