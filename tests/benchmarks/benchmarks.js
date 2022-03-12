@@ -4,8 +4,8 @@ const AkivaDB = require("../../lib/main").default;
 
 const suite = new Suite();
 const db = new AkivaDB({
-  name: "benchmark",
-  root: "testdbs",
+  name: "aa",
+  root: "akivadb"
 });
 
 console.group("\nBenchmark");

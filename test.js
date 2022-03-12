@@ -19,6 +19,9 @@ classes.on("insert", (x) => {
   updateObj = x;
   console.log(x._id, "insert");
 });
+classes.on("insertMany", (x) => {
+  console.log(x, "insertMany");
+});
 classes.on("delete", (x) => {
   console.log(x._id, "delete");
 });
@@ -26,8 +29,7 @@ classes.on("update", (x) => {
   console.log(x._id, "update");
 });
 
-let y,
-  x = 10;
+let x = 10;
 while (x > 0) {
   classes
     .insert({
@@ -41,6 +43,7 @@ while (x > 0) {
   x--;
 }
 
+let y =10;
 let arr = Array.from({ length: y }, (x, i) => ({
   name: `Class ${y}`,
   students: i + 1,
