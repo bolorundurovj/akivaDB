@@ -50,11 +50,17 @@ for (var i = 0; i < x; i++) {
 }
 console.timeEnd(x + " : Insert(s)");
 
+console.time(x + " : Delete");
+saved.deleteMany().then((x) => {
+  console.log(x);
+});
+console.timeEnd(x + " : Delete");
+
 console.time(x + " : Insert Many");
 let arr = Array.from({ length: x }, (a, i) => ({
-  name: `Class Arr ${x}`,
-  students: i + 1,
-  createdAt: new Date(),
+  title: `Class Arr ${x}`,
+  rating: i + 1,
+  published: new Date(),
   _id: `arr${i}`,
 }));
 (async () => {
@@ -82,7 +88,7 @@ console.timeEnd(x + " : Find One without query");
 
 console.time(x + " : Find One with query");
 (async () => {
-  await saved.findOne({ title: "AkivaDB rocks 1" });
+  await saved.findOne({ title: "AkivaDB rocks 50" });
 })();
 console.timeEnd(x + " : Find One with query");
 
@@ -100,12 +106,18 @@ console.timeEnd(x + " : Find Many by ID");
 
 console.time(x + " : Update One");
 (async () => {
-  await saved.updateOne(
-    { title: "AkivaDB rocks 1" },
-    { _id: "1", rating: "AkivaDB is awesome" }
-  );
+  await saved.updateOne({ _id: "1" }, { rating: "AkivaDB is awesome" });
 })();
 console.timeEnd(x + " : Update One");
+
+console.time(x + " : Update Many");
+(async () => {
+  await saved.updateMany(
+    { title: "AkivaDB rocks 10" },
+    { rating: "AkivaDB is awesome" }
+  );
+})();
+console.timeEnd(x + " : Update Many");
 
 console.log("File size at end : ", saved.size, saved.fileSize);
 
@@ -195,7 +207,9 @@ console.timeEnd(x + " : Update One");
 console.log("File size at end : ", inmemory.size, inmemory.fileSize);
 
 console.log(
-  "/****************** Test for " + x + " documents(s) inmemory *************/\n\n"
+  "/****************** Test for " +
+    x +
+    " documents(s) inmemory *************/\n\n"
 );
 
 process.exit();

@@ -69,12 +69,12 @@ classes
 // })
 
 updateObj.name = `Jane Doe - new`;
-classes.updateById(updateObj._id, updateObj).then((a) => {
+classes.updateById(updateObj._id, {name: `Jane Doe - new`}).then((a) => {
   // console.log(a);
 });
 
 updateObj.students = 1e4;
-classes.updateOne({students: updateObj.students}, updateObj).then((a) => {
+classes.updateOne({students: updateObj.students}, {name: `Jane Doe - x`}).then((a) => {
   // console.log(a);
 });
 
@@ -98,13 +98,13 @@ classes.deleteOne({ name: "Class 10" }).then((x) => {
   console.log(x);
 });
 
-// classes.deleteMany().then(x => {
-//     // console.log(x);
-// })
+classes.deleteMany().then(x => {
+    console.log(x);
+})
 
 // classes.drop()
 classes.updateMany(
-    { name: "Jane Doe - 1" },
+    { name: "Jane Doe - new" },
     { name: "AkivaDB is awesome" }
 ).then((x) => {
     console.log(x);

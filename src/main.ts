@@ -192,21 +192,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     if (!this.file) throw new AkivaDBError(MEMORY_MODE("persist"), 3);
 
     const data: string[] = [];
-    _.forEach(this.indexes, (_id: string) => {
-      try {
-        const doc = this.get(_id);
-        if (doc) {
-          data.push(JSON.stringify(doc));
-        }
-      } catch (err) {
-        this.remove(_id);
-
-        if (strict) {
-          throw err;
-        }
-      }
-    });
-    // this.indexes.forEach((_id) => {
+    // _.forEach(this.indexes, (_id: string) => {
     //   try {
     //     const doc = this.get(_id);
     //     if (doc) {
@@ -220,6 +206,21 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     //     }
     //   }
     // });
+
+    this.indexes.forEach((_id) => {
+      try {
+        const doc = this.get(_id);
+        if (doc) {
+          data.push(JSON.stringify(doc));
+        }
+      } catch (err) {
+        this.remove(_id);
+
+        if (strict) {
+          throw err;
+        }
+      }
+    });
 
     fs.writeFileSync(this.file, data.join("\n"));
   }
@@ -625,6 +626,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * @param {DocPrivate<T>} doc Document
    * @param {Update<T>} update
    * @returns {DocPrivate<T>} document
+   * @todo update only passed fields not entire document
    */
   private _updateDoc(doc: DocPrivate<T>, update: Update<T>) {
     const newDoc = isModifier(update)
