@@ -9,7 +9,7 @@
 		"test": "node tests/test.js",
 		"benchmark:time": "node tests/benchmarks/time.js",
 		"bench:ops": "tsc && node --max-old-space-size=7192 tests/benchmarks/benchmarks.js",
-		"bench:rps": "tsc && node tests/benchmarks/benchmark.js"
+		"bench:rps": "tsc && node --max-old-space-size=7192 tests/benchmarks/benchmark.js"
 	},
 	"repository": {
 		"type": "git",

@@ -4,10 +4,9 @@ const Benchmarkify = require("benchmarkify");
 const benchmark = new Benchmarkify("Benchmarks").printHeader();
 
 const suite = benchmark.createSuite("Benchmark OPS");
-const db = new AkivaDB({
-  name: "benchmark",
-  root: "testdbs",
-});
+const db = new AkivaDB();
+
+console.log("Memory Mode: ", db.memoryMode);
 
 console.group("\nBenchmark");
 suite
