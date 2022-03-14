@@ -31,30 +31,6 @@ console.log(
 
 console.log("File size at beginning : ", saved.size, saved.fileSize);
 
-// for (var i = 0; i < x; i++) {
-//   saved
-//     .insert({
-//       title: "AkivaDB rocks " + i,
-//       published: "today " + i,
-//       rating: "5 stars " + i,
-//       _id: `${i}`,
-//     })
-//     .then((x) => {
-//       console.log(x._id);
-//       saved
-//         .deleteMany()
-//         .then((x) => {
-//           console.log(`Deleted ${x} documents`);
-//         })
-//         .catch((err) => {
-//           console.error(err);
-//         });
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//     });
-// }
-
 const arr = Array.from({ length: x }, (a, i) => ({
   title: `Class Arr ${i}`,
   rating: i + 1,
