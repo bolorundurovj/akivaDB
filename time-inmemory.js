@@ -26,7 +26,7 @@ if (process.argv[2] && typeof arg === "number") {
 }
 
 console.log(
-  "/****************** Test for " + x + " documents(s) persisted *************/"
+  "/****************** Test for " + x + " documents(s) inmemory *************/"
 );
 
 console.log("File size at beginning : ", saved.size, saved.fileSize);
@@ -174,7 +174,7 @@ saved
                                             console.log(
                                               "/****************** Test for " +
                                                 x +
-                                                " documents(s) persisted *************/\n\n"
+                                                " documents(s) inmemory *************/\n\n"
                                             );
                                           })
                                           .catch((err) => {
