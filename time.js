@@ -164,6 +164,19 @@ saved
                                             );
                                             startTime = Date.now();
                                           })
+                                          .then(() => {
+                                            console.log(
+                                              "File size at end : ",
+                                              saved.size,
+                                              saved.fileSize
+                                            );
+
+                                            console.log(
+                                              "/****************** Test for " +
+                                                x +
+                                                " documents(s) persisted *************/\n\n"
+                                            );
+                                          })
                                           .catch((err) => {
                                             console.error(err);
                                           });
@@ -207,13 +220,5 @@ saved
   .catch((err) => {
     console.error(err);
   });
-
-console.log("File size at end : ", saved.size, saved.fileSize);
-
-console.log(
-  "/****************** Test for " +
-    x +
-    " documents(s) persisted *************/\n\n"
-);
 
 // process.exit();
