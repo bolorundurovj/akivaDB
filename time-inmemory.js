@@ -2,17 +2,17 @@
 const AkivaDB = require("./lib/main").default;
 const saved = new AkivaDB({ name: "time", root: "akivadb", inMemory: true });
 
-// delete all records
-(async () => {
-  await saved.deleteMany();
-})();
-
 console.log(
   ` DB Name: ${saved.dbName} \n`,
   `InMemory: ${saved.inMemory}\n`,
   `Memory Mode: ${saved.memoryMode} \n`,
   `DB Version: ${saved.version}\n`
 );
+
+// delete all records
+(async () => {
+  await saved.deleteMany();
+})();
 
 /**
  * 1,000 default
@@ -30,30 +30,6 @@ console.log(
 );
 
 console.log("File size at beginning : ", saved.size, saved.fileSize);
-
-// for (var i = 0; i < x; i++) {
-//   saved
-//     .insert({
-//       title: "AkivaDB rocks " + i,
-//       published: "today " + i,
-//       rating: "5 stars " + i,
-//       _id: `${i}`,
-//     })
-//     .then((x) => {
-//       console.log(x._id);
-//       saved
-//         .deleteMany()
-//         .then((x) => {
-//           console.log(`Deleted ${x} documents`);
-//         })
-//         .catch((err) => {
-//           console.error(err);
-//         });
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//     });
-// }
 
 const arr = Array.from({ length: x }, (a, i) => ({
   title: `Class Arr ${i}`,
@@ -188,6 +164,19 @@ saved
                                             );
                                             startTime = Date.now();
                                           })
+                                          .then(() => {
+                                            console.log(
+                                              "File size at end : ",
+                                              saved.size,
+                                              saved.fileSize
+                                            );
+
+                                            console.log(
+                                              "/****************** Test for " +
+                                                x +
+                                                " documents(s) persisted *************/\n\n"
+                                            );
+                                          })
                                           .catch((err) => {
                                             console.error(err);
                                           });
@@ -231,13 +220,5 @@ saved
   .catch((err) => {
     console.error(err);
   });
-
-console.log("File size at end : ", saved.size, saved.fileSize);
-
-console.log(
-  "/****************** Test for " +
-    x +
-    " documents(s) persisted *************/\n\n"
-);
 
 // process.exit();
