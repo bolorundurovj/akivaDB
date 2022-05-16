@@ -19,6 +19,9 @@ classes.on("insert", (x) => {
   updateObj = x;
   console.log(x._id, "insert");
 });
+classes.on("insertMany", (x) => {
+  console.log(x, "insertMany");
+});
 classes.on("delete", (x) => {
   console.log(x._id, "delete");
 });
@@ -26,8 +29,7 @@ classes.on("update", (x) => {
   console.log(x._id, "update");
 });
 
-let y,
-  x = 10;
+let x = 10;
 while (x > 0) {
   classes
     .insert({
@@ -41,6 +43,7 @@ while (x > 0) {
   x--;
 }
 
+let y =10;
 let arr = Array.from({ length: y }, (x, i) => ({
   name: `Class ${y}`,
   students: i + 1,
@@ -66,12 +69,12 @@ classes
 // })
 
 updateObj.name = `Jane Doe - new`;
-classes.updateById(updateObj._id, updateObj).then((a) => {
+classes.updateById(updateObj._id, {name: `Jane Doe - new`}).then((a) => {
   // console.log(a);
 });
 
 updateObj.students = 1e4;
-classes.updateOne({students: updateObj.students}, updateObj).then((a) => {
+classes.updateOne({students: updateObj.students}, {name: `Jane Doe - x`}).then((a) => {
   // console.log(a);
 });
 
@@ -95,13 +98,13 @@ classes.deleteOne({ name: "Class 10" }).then((x) => {
   console.log(x);
 });
 
-// classes.deleteMany().then(x => {
-//     // console.log(x);
-// })
+classes.deleteMany().then(x => {
+    console.log(x);
+})
 
 // classes.drop()
 classes.updateMany(
-    { name: "Jane Doe - 1" },
+    { name: "Jane Doe - new" },
     { name: "AkivaDB is awesome" }
 ).then((x) => {
     console.log(x);

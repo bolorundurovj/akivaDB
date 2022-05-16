@@ -3,10 +3,9 @@ const { Suite } = require("benchmark");
 const AkivaDB = require("../../lib/main").default;
 
 const suite = new Suite();
-const db = new AkivaDB({
-  name: "benchmark",
-  root: "testdbs",
-});
+const db = new AkivaDB();
+
+console.log("Memory Mode: ", db.memoryMode);
 
 console.group("\nBenchmark");
 suite
@@ -22,7 +21,7 @@ suite
   .add("insertMany()", async () => {
     await db.insertMany(
       Array.from({ length: 2 }, (x, i) => ({
-        name: `Class ${i}`
+        name: `Class ${i}`,
       }))
     );
   })
@@ -66,4 +65,4 @@ suite
   })
   .run();
 
-  process.exit();
+process.exit();

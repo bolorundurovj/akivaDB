@@ -36,6 +36,7 @@ import {
 } from "./errors";
 import { generateUIDByTimestamp } from "./idGenerator";
 import { AkivaDBError } from "./errorHandler";
+import * as _ from "lodash";
 
 export default class AkivaDB<T extends object> extends EventEmitter {
   readonly root?: string;
@@ -97,6 +98,15 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     this.map[doc._id] = doc;
 
     return doc;
+  }
+
+  private addMany(docs: Array<DocPrivate<T>>) {
+    _.forEach(docs, (doc) => {
+      this.indexes.add(doc._id);
+      _.set(this.map, doc._id, doc);
+    });
+
+    return docs;
   }
 
   private get(_id: string): DocPrivate<T> | null {
@@ -182,6 +192,21 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     if (!this.file) throw new AkivaDBError(MEMORY_MODE("persist"), 3);
 
     const data: string[] = [];
+    // _.forEach(this.indexes, (_id: string) => {
+    //   try {
+    //     const doc = this.get(_id);
+    //     if (doc) {
+    //       data.push(JSON.stringify(doc));
+    //     }
+    //   } catch (err) {
+    //     this.remove(_id);
+
+    //     if (strict) {
+    //       throw err;
+    //     }
+    //   }
+    // });
+
     this.indexes.forEach((_id) => {
       try {
         const doc = this.get(_id);
@@ -251,17 +276,8 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    */
   insertMany(docs: OneOrMore<Doc<T>>, options?: { strict?: boolean }) {
     {
-      return Promise.all(
-        toArray(docs).map((newDoc) => this.insert(newDoc, options))
-      ).then((docs) => {
-        const arr = docs.reduce<DocPrivate<T>[]>((acc, doc) => {
-          if (doc !== null) {
-            acc.push(doc);
-          }
-          return acc;
-        }, []);
-        return arr;
-      });
+      docs = toArray(docs);
+      return Promise.resolve(this._addManyAndEmit(docs));
     }
   }
 
@@ -551,6 +567,26 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   };
 
   /**
+   * Add documents to database and emit `insert`
+   * @param {Array<Doc<T>>} docs Documents
+   * @returns {Array<DocPrivate<T>>} docs
+   */
+  private _addManyAndEmit = (docs: Array<Doc<T>>): Array<DocPrivate<T>> => {
+    const arr = _.map(docs, (x) => {
+      return _.assign(x, {
+        _id: !!x._id ? x._id.toString() : generateUIDByTimestamp(),
+      });
+    });
+    this.addMany(arr);
+
+    this.emit("insertMany", arr);
+    if (this.inMemory == false) {
+      this.persist();
+    }
+    return arr;
+  };
+
+  /**
    * Mark document as deleted against persistence.
    * @param doc document
    */
@@ -590,6 +626,7 @@ export default class AkivaDB<T extends object> extends EventEmitter {
    * @param {DocPrivate<T>} doc Document
    * @param {Update<T>} update
    * @returns {DocPrivate<T>} document
+   * @todo update only passed fields not entire document
    */
   private _updateDoc(doc: DocPrivate<T>, update: Update<T>) {
     const newDoc = isModifier(update)
@@ -605,3 +642,24 @@ export default class AkivaDB<T extends object> extends EventEmitter {
     return newDoc;
   }
 }
+
+export const mid = (req, res, next) => {
+  if (
+    /^\/akivadb/i.test(String(req.path)) &&
+    /^\/akivadb/i.test(String(req.originalUrl))
+  ) {
+    if (
+      req.method == "GET" &&
+      /^\/akivadb\/login/i.test(String(req.path)) &&
+      /^\/akivadb\/login/i.test(String(req.originalUrl))
+    ) {
+      res.send("post login");
+    } else {
+      const file = path.join(__dirname, "..", "pages", "login.html");
+      const content = fs.readFileSync(file, { encoding: "utf8", flag: "r" });
+      res.send(content);
+    }
+  }
+
+  next();
+};
