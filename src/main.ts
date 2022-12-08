@@ -643,23 +643,3 @@ export default class AkivaDB<T extends object> extends EventEmitter {
   }
 }
 
-export const mid = (req, res, next) => {
-  if (
-    /^\/akivadb/i.test(String(req.path)) &&
-    /^\/akivadb/i.test(String(req.originalUrl))
-  ) {
-    if (
-      req.method == "GET" &&
-      /^\/akivadb\/login/i.test(String(req.path)) &&
-      /^\/akivadb\/login/i.test(String(req.originalUrl))
-    ) {
-      res.send("post login");
-    } else {
-      const file = path.join(__dirname, "..", "pages", "login.html");
-      const content = fs.readFileSync(file, { encoding: "utf8", flag: "r" });
-      res.send(content);
-    }
-  }
-
-  next();
-};
